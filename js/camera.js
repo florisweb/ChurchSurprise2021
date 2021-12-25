@@ -7,9 +7,9 @@ function _Camera() {
 		0.1,
 		1000
 	);
-	this.camera.position.x = 0;
+	this.camera.position.x = -3;
 	this.camera.position.y = 100;
-	this.camera.position.z = 0;
+	this.camera.position.z = 20;
 	// this.camera.lookAt(0, 0, 0);
 
 	this.position = new Vector(0, 50, 0);
@@ -41,7 +41,13 @@ function _Camera() {
 
 
 
-
+	this.getBlockPos = function() {
+		const blockSize = World.size / World.tileCount;
+		return {
+			x: Math.round(Camera.camera.position.x / blockSize) + World.worldShape.length / 2,
+			y: Math.round(Camera.camera.position.z / blockSize) + World.worldShape[0].length / 2
+		}
+	}
 
 	this.resize = function() {
 		this.camera.aspect = window.innerWidth / window.innerHeight;

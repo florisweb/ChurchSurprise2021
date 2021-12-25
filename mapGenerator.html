@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<style>
+		body {
+			position: absolute;
+			margin: 0;
+			padding: 0;
+		}
+		canvas {
+			float: left;
+			background: #fed;
+			width: 50vw;
+		}
+		input {
+			position: relative;
+			width: 100vw;
+			height: 150px;
+			border: 1px solid red;
+		}
+	</style>
+	<title></title>
+</head>
+<body>
+	<input type='file' id='input' oninput="setImgToCanv()">
+	<br>
+	<canvas id='inputCanv'></canvas>
+
+	<script>
+		let ictx = inputCanv.getContext("2d");
+
+		function setImgToCanv() {
+			if (!input.files || !input.files[0]) return;
+		  
+			const FR = new FileReader();
+			FR.addEventListener("load", (evt) => {
+				const img = new Image();
+				img.addEventListener("load", () => {
+					ictx.canvas.width = img.width;
+					ictx.canvas.height = img.height;
+
+					ictx.clearRect(0, 0, img.width, img.height);
+					ictx.drawImage(img, 0, 0);
+
+					doImageOperation();
+				});
+				img.src = evt.target.result;
+			});
+			FR.readAsDataURL(input.files[0]);
+		}
+
+		// Types
+		/*
+			0: grass
+			1: stone
+			2: water
+			3: wooden-log
+		*/
+		
+
+
+
+
+		let mapData = [];
+		const significance = 20000000;
+		function doImageOperation() {
+			let data = ictx.getImageData(0, 0, ictx.canvas.width, ictx.canvas.height);
+			const channels = 4;
+			for (let i = 0; i < data.data.length; i += channels)
+			{
+				let pixelIndex = i / channels;
+				let x = (pixelIndex % ictx.canvas.width);
+				let y = (pixelIndex - x) / ictx.canvas.height;
+				let heightValue = Math.round(data.data[i + 3] / 255 * significance) / significance;
+				let isEmpty = heightValue < .01;
+
+				let type = -1; // empty
+				if (!isEmpty)
+				{
+					type = 2;
+					if (heightValue > .1) type = 0;
+					if (data.data[i] > 220) type = 3;
+					if (data.data[i + 1] > 230) type = 4;
+					if (data.data[i + 2] > 250) {type = 1; heightValue = .5}
+				}
+
+				if (!mapData[x]) mapData[x] = [];
+				mapData[x][y] = {
+					dataR: data.data[i],
+					type: type,
+					y: heightValue * 10,
+				};
+			}
+		}
+
+
+
+
+
+
+
+	</script>
+
+
+</body>
+</html>

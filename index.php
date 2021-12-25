@@ -42,6 +42,7 @@
 		<script src='js/perlin.js'></script>
 		<script src='js/vector.js'></script>
 
+		<script src='js/mapData.js'></script>
 		<script src='js/inputHandler.js'></script>
 		<script src='js/worldGenerator.js'></script>
 		<script src='js/world.js'></script>

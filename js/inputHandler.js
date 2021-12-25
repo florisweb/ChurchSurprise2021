@@ -205,14 +205,13 @@ function _InputHandler(_canvas) {
 
 	const blockSize = World.size / World.tileCount;
 	let prevTime = performance.now();
+
 	this.update = function() {
 
 		// Gravity
-		let blockX = Math.round(Camera.camera.position.x / blockSize) + World.worldShape.length / 2;
-		let blockY = Math.round(Camera.camera.position.z / blockSize) + World.worldShape[0].length / 2;
-		let curBlock = World.worldShape[blockX][blockY];
+		let curPos = Camera.getBlockPos();
+		let curBlock = World.worldShape[curPos.x][curPos.y];
 		let dy = Camera.camera.position.y - (curBlock.y + blockSize * 2);
-		velocity.y = -dy * 20;
 
 		if (this.usesDeviceMotionControls)
 		{
@@ -235,6 +234,7 @@ function _InputHandler(_canvas) {
 				const delta = ( time - prevTime ) / 1000;
 
 				velocity.x -= velocity.x * 10.0 * delta;
+				velocity.y = -dy * 20;
 				velocity.z -= velocity.z * 10.0 * delta;
 
 

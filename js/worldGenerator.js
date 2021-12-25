@@ -82,6 +82,30 @@ function _WorldGenerator() {
 				side: THREE.DoubleSide,
 				map: new THREE.TextureLoader().load('images/blocks/2/side.png'),
 			})
+		},
+		{
+			top: new THREE.MeshLambertMaterial({
+				color: 0xffffff, 
+				side: THREE.DoubleSide,
+				map: new THREE.TextureLoader().load('images/blocks/3/top.png'),
+			}),
+			side: new THREE.MeshLambertMaterial({
+				color: 0xffffff, 
+				side: THREE.DoubleSide,
+				map: new THREE.TextureLoader().load('images/blocks/3/side.png'),
+			})
+		},
+		{
+			top: new THREE.MeshLambertMaterial({
+				color: 0xffffff, 
+				side: THREE.DoubleSide,
+				map: new THREE.TextureLoader().load('images/blocks/4/top.png'),
+			}),
+			side: new THREE.MeshLambertMaterial({
+				color: 0xffffff,
+				side: THREE.DoubleSide,
+				map: new THREE.TextureLoader().load('images/blocks/4/side.png'),
+			})
 		}
 	];
 		
@@ -108,6 +132,7 @@ function _WorldGenerator() {
 			{
 				let z = dz + chunkZ * chunkSize;
 				let type = worldShape[x][z].type;
+				if (type < 0 || type > materials.length) continue;
 
 				let Meshes = createBlockMesh({
 					x: x,
@@ -240,10 +265,24 @@ function _WorldGenerator() {
 	}
 
 
+	this.createWaterFloor = function() {
+		let geometry = new THREE.PlaneGeometry(1000, 1000);
+		let mesh = new THREE.Mesh(geometry, materials[2].top);
+		mesh.rotation.x = .5 * Math.PI;
+		mesh.position.y = -0.1;
+
+		World.scene.add(mesh);
+		World.meshes.push(mesh);
+	}
+
+	this.createHouseRoof = function() {
+		
+	}
 
 
 
 	this.createWorld = function({tileCount, worldSize, worldShape}) {
+		this.createWaterFloor();
 		for (let x = 0; x < tileCount / chunkSize; x++)
 		{
 			for (let z = 0; z < tileCount / chunkSize; z++)
