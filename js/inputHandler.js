@@ -9,37 +9,86 @@
 
 
 function _InputHandler(_canvas) {
-	let HTML = {
+	const This = this;
+	const HTML = {
 		canvas: _canvas,
+	};
+	const speed = .5;
+
+	let raycaster = new THREE.Raycaster( new THREE.Vector3(), new THREE.Vector3( 0, - 1, 0 ), 0, 10 );
+
+
+
+	let mouseDown = false;
+	document.body.addEventListener("mousedown", function(_e) {
+		mouseDown = true;
+		_e.preventDefault();
+		return false;
+	});
+	document.body.addEventListener("mouseup", function(_e) {
+		mouseDown = false;
+		_e.preventDefault();
+		return false;
+	});
+	// const raycaster = new THREE.Raycaster();
+	// let mousePos = new THREE.Vector2();
+	// mousePos.x = -2;
+	// mousePos.y = -2;
+
+	// this.mouseDown = false;
+	// this.draging = false;
+
+	// const blocker = document.getElementById( 'blocker' );
+	// const instructions = document.getElementById( 'instructions' );
+
+	this.usesDeviceMotionControls = false;
+	if (window.DeviceMotionEvent)
+	{
+		this.usesDeviceMotionControls = true;
+		this.controls = new THREE.DeviceOrientationControls(Camera.camera);
+		document.body.onclick = () => {
+			window.DeviceMotionEvent.requestPermission()
+			  .then(response => {
+			    console.log(response);
+			  }
+			);
+		}
+	} else {
+
+		this.controls = new PointerLockControls(Camera.camera, document.body);
+		// instructions.addEventListener( 'click', function () {
+		document.body.addEventListener( 'click', function () {
+			This.controls.lock();
+		});
+
+		this.controls.addEventListener( 'lock', function () {
+			// instructions.style.display = 'none';
+			// blocker.style.display = 'none';
+		});
+
+		this.controls.addEventListener( 'unlock', function () {
+			// blocker.style.display = 'block';
+			// instructions.style.display = '';
+		});
+
+
+		World.scene.add(this.controls.getObject());
 	}
-	const raycaster = new THREE.Raycaster();
-	let mousePos = new THREE.Vector2();
-	mousePos.x = -2;
-	mousePos.y = -2;
 
-	this.mouseDown = false;
-	this.draging = false;
+
+	
 
 
 
-
-
-
-	this.settings = new function() {
-		this.dragSpeed = 1;
-		this.scrollSpeed = .005
-	}
+	// this.settings = new function() {
+	// 	this.dragSpeed = 1;
+	// 	this.scrollSpeed = .005
+	// }
 	// assignMouseDrager();
 	// assignMouseMoveHandler();
 
 
-	document.body.onclick = () => {
-		window.DeviceMotionEvent.requestPermission()
-		  .then(response => {
-		    console.log(response);
-		  }
-		);
-	}
+	
 	// window.addEventListener("deviceorientation", function(event) {
  //        // alpha: rotation around z-axis
  //        var rotateDegrees = event.alpha / 180 * Math.PI;
@@ -80,66 +129,153 @@ function _InputHandler(_canvas) {
 	// });
 
 
+	let moveForward = false;
+	let moveLeft = false;
+	let moveBackward = false;
+	let moveRight = false;
 
+	const velocity = new THREE.Vector3();
+	const direction = new THREE.Vector3();
 
-	window.onkeydown = function(_e) {
-		const moveSpeed = -20;
-		const rotateSpeed = .5;
-		let key = _e.key.toLowerCase();
+	const onKeyDown = function ( event ) {
 
-		if (key == 'w')
-		{
-			Camera.velocity.value[2] = moveSpeed;
-		} else if (key == 's')
-		{
-			Camera.velocity.value[2] = -moveSpeed;
+		switch ( event.code ) {
+
+			case 'ArrowUp':
+			case 'KeyW':
+				moveForward = true;
+				break;
+
+			case 'ArrowLeft':
+			case 'KeyA':
+				moveLeft = true;
+				break;
+
+			case 'ArrowDown':
+			case 'KeyS':
+				moveBackward = true;
+				break;
+
+			case 'ArrowRight':
+			case 'KeyD':
+				moveRight = true;
+				break;
 		}
-		if (key == 'a')
-		{
-			Camera.velocity.value[0] = moveSpeed;
-		} else if (_e.key == 'd')
-		{
-			Camera.velocity.value[0] = -moveSpeed;
+
+	};
+
+	const onKeyUp = function ( event ) {
+		switch ( event.code ) {
+			case 'ArrowUp':
+			case 'KeyW':
+				moveForward = false;
+				break;
+
+			case 'ArrowLeft':
+			case 'KeyA':
+				moveLeft = false;
+				break;
+
+			case 'ArrowDown':
+			case 'KeyS':
+				moveBackward = false;
+				break;
+
+			case 'ArrowRight':
+			case 'KeyD':
+				moveRight = false;
+				break;
 		}
 
-		if (key == ' ')
-		{
-			Camera.velocity.value[1] = -moveSpeed;
-		} else if (key == 'shift')
-		{
-			Camera.velocity.value[1] = moveSpeed;
-		}
+	};
 
-
-		if (key == 'q')
-		{
-			Camera.angularVelocity.value[1] = rotateSpeed;
-		} else if (key == 'e')
-		{
-			Camera.angularVelocity.value[1] = -rotateSpeed;
-		}
-	}
-	window.onkeyup = function(_e) {
-		let key = _e.key.toLowerCase();
-		if (key == 'w' || key == 's') Camera.velocity.value[2] = 0;
-		if (key == 'a' || key == 'd') Camera.velocity.value[0] = 0;
-		if (key == ' ' || key == 'shift') Camera.velocity.value[1] = 0;
-		if (key == 'q' || key == 'e') Camera.angularVelocity.value[1] = 0;
-	}
+	window.addEventListener( 'keydown', onKeyDown );
+	window.addEventListener( 'keyup', onKeyUp );
 
 
 
-	HTML.canvas.addEventListener('mousemove', function(_e) {
-		// InputHanlder.raycaster
-		// mousePos.x = (_e.clientX / window.innerWidth) * 2 - 1;
-		// mousePos.y = -(_e.clientY / window.innerHeight) * 2 + 1;
+	// HTML.canvas.addEventListener('mousemove', function(_e) {
+	// 	// InputHanlder.raycaster
+	// 	// mousePos.x = (_e.clientX / window.innerWidth) * 2 - 1;
+	// 	// mousePos.y = -(_e.clientY / window.innerHeight) * 2 + 1;
 
-	});
+	// });
 
-	let resetColorValue = false;
+	// let resetColorValue = false;
 
 	const blockSize = World.size / World.tileCount;
+	let prevTime = performance.now();
 	this.update = function() {
+
+		// Gravity
+		let blockX = Math.round(Camera.camera.position.x / blockSize) + World.worldShape.length / 2;
+		let blockY = Math.round(Camera.camera.position.z / blockSize) + World.worldShape[0].length / 2;
+		let curBlock = World.worldShape[blockX][blockY];
+		let dy = Camera.camera.position.y - (curBlock.y + blockSize * 2);
+		velocity.y = -dy * 20;
+
+		if (this.usesDeviceMotionControls)
+		{
+			this.controls.update();
+		} else {
+			// this.controls.moveForward(velocity * 1000);
+
+
+			const time = performance.now();
+			if ( this.controls.isLocked === true ) {
+
+				raycaster.ray.origin.copy( this.controls.getObject().position );
+				raycaster.ray.origin.y -= 10;
+
+
+				const intersections = raycaster.intersectObjects( World.scene.children, false );
+
+				const onObject = intersections.length > 0;
+
+				const delta = ( time - prevTime ) / 1000;
+
+				velocity.x -= velocity.x * 10.0 * delta;
+				velocity.z -= velocity.z * 10.0 * delta;
+
+
+				direction.z = Number( moveForward ) - Number( moveBackward );
+				direction.x = Number( moveRight ) - Number( moveLeft );
+				direction.normalize(); // this ensures consistent movements in all directions
+
+				if ( moveForward || moveBackward ) velocity.z -= direction.z * 100.0 * delta * speed;
+				if ( moveLeft || moveRight ) velocity.x -= direction.x * 100.0 * delta * speed;
+
+				this.controls.moveRight( - velocity.x * delta );
+				this.controls.moveForward( - velocity.z * delta );
+
+
+				this.controls.getObject().position.y += ( velocity.y * delta ); // new behavior
+			}
+
+			prevTime = time;
+		}
+
+
+
+
+
+
+
+
+
+
+
+
+
+		// Forwards movement
+		if (this.usesDeviceMotionControls && mouseDown)
+		{
+			Camera.velocity.value[0] = velocity * Math.sin(Camera.rotation.value[1] + Math.PI);
+			Camera.velocity.value[2] = velocity * Math.cos(Camera.rotation.value[1] + Math.PI);
+		}
+
+
+		// Camera.velocity.value[0] = 1;
 		// raycaster.setFromCamera(mousePos, Camera.camera);
 		// const intersects = raycaster.intersectObjects(World.meshes);
 		
@@ -148,8 +284,6 @@ function _InputHandler(_canvas) {
 		// World.buildMesh.position.x = Math.round(intersects[0].point.x / blockSize) * blockSize;
 		// World.buildMesh.position.y = (Math.round(intersects[0].point.y / blockSize) + .5) * blockSize;
 		// World.buildMesh.position.z = Math.round(intersects[0].point.z / blockSize) * blockSize;
-
-		
 	}
 
 

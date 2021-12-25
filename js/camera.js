@@ -7,9 +7,9 @@ function _Camera() {
 		0.1,
 		1000
 	);
-	this.camera.position.z = 60;
-	this.camera.position.x = 100;
-	this.camera.position.y = 60;
+	this.camera.position.x = 0;
+	this.camera.position.y = 100;
+	this.camera.position.z = 0;
 	// this.camera.lookAt(0, 0, 0);
 
 	this.position = new Vector(0, 50, 0);
@@ -22,15 +22,20 @@ function _Camera() {
 
 	this.update = function(_dt) {
 		this.position.add(this.velocity.copy().scale(_dt));
-		// this.rotation.add(this.angularVelocity.copy().scale(_dt));
+		this.rotation.add(this.angularVelocity.copy().scale(_dt));
 
-		this.camera.position.x = this.position.value[0];
-		this.camera.position.y = this.position.value[1];
-		this.camera.position.z = this.position.value[2];
-		
-		// this.camera.rotation.x = this.rotation.value[0];
-		// this.camera.rotation.y = this.rotation.value[1];
-		// this.camera.rotation.z = this.rotation.value[2];
+		if (InputHandler && InputHandler.usesDeviceMotionControls)
+		{
+			this.camera.position.x = this.position.value[0];
+			this.camera.position.y = this.position.value[1];
+			this.camera.position.z = this.position.value[2];
+		}
+
+		this.rotation.value = [
+			this.camera.rotation.x || this.camera.rotation._x,
+			this.camera.rotation.y || this.camera.rotation._y,
+			this.camera.rotation.z || this.camera.rotation._z,
+		];
 	}
 	this.update(0);
 

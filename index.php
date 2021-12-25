@@ -19,14 +19,25 @@
 				top: 0;
 			}
 			
+			.noselect {
+			  -webkit-touch-callout: none; /* iOS Safari */
+			    -webkit-user-select: none; /* Safari */
+			     -khtml-user-select: none; /* Konqueror HTML */
+			       -moz-user-select: none; /* Firefox */
+			        -ms-user-select: none; /* Internet Explorer/Edge */
+			            user-select: none; /* Non-prefixed version, currently
+			                                  supported by Chrome and Opera */
+			}
+
 		</style>
 	</head>
-	<body>
+	<body class='noselect'>
 	
 
 		
-		<script src='https://cdnjs.cloudflare.com/ajax/libs/three.js/102/three.js'></script>
-		<script src='js/DeviceOrientationControls.js'></script>
+		<script src='js/three.js'></script>
+		<script src='js/controls/deviceOrientationControls.js'></script>
+		<script src='js/controls/mouseControls.js'></script>
 
 		<script src='js/perlin.js'></script>
 		<script src='js/vector.js'></script>

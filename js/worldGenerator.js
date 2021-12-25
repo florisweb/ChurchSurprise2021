@@ -255,7 +255,6 @@ function _WorldGenerator() {
 					worldSize: worldSize,
 					worldShape: worldShape
 				});
-				
 			}	
 		}
 	}

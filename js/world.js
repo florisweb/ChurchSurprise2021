@@ -7,8 +7,8 @@ function _World({tileCount, worldSize}) {
 	this.tileCount = tileCount;
 
 	this.scene = new THREE.Scene();
+	this.scene.fog = new THREE.Fog( 0xffffff, 0, 150 );
 	this.renderer = new THREE.WebGLRenderer({antialias: true});
-	this.controls = new THREE.DeviceOrientationControls(Camera.camera);
 
 	this.buildMesh;
 
@@ -27,12 +27,11 @@ function _World({tileCount, worldSize}) {
 		});
 
 
-		let worldShape = this.generator.createWorldShape({tileCount: this.tileCount, worldSize: this.size});
-		window.world = worldShape;
+		this.worldShape = this.generator.createWorldShape({tileCount: this.tileCount, worldSize: this.size});
 		this.generator.createWorld({
 			worldSize: this.size,
 			tileCount: this.tileCount,
-			worldShape: worldShape
+			worldShape: this.worldShape
 		});
 
 
@@ -51,7 +50,8 @@ function _World({tileCount, worldSize}) {
 
 
 		InputHandler = new _InputHandler(World.renderer.domElement);
-		this.controls.connect();
+		if (InputHandler.usesDeviceMotionControls) InputHandler.controls.connect();
+		if (InputHandler.usesDeviceMotionControls) InputHandler.controls.connect();
 		this.update();
 		this.render();
 	}
@@ -59,8 +59,7 @@ function _World({tileCount, worldSize}) {
 	
 
 	this.update = function() {
-		this.controls.update();
-		// InputHandler.update();
+		InputHandler.update();
 
 		// setTimeout(function () {World.update()}, 100);
 	}
