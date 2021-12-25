@@ -205,36 +205,34 @@ function _InputHandler(_canvas) {
 
 	const blockSize = World.size / World.tileCount;
 	let prevTime = performance.now();
+	let prevSavePos = {x: Camera.camera.position.x, z: Camera.camera.position.z};
 
 	this.update = function() {
 
 		// Gravity
 		let curPos = Camera.getBlockPos();
-		let curBlock = World.worldShape[curPos.x][curPos.y];
+		let curBlock = World.worldShape[curPos.x][curPos.z];
+		if (!curBlock) return;
 		let dy = Camera.camera.position.y - (curBlock.y + blockSize * 2);
+		if (curBlock.type == -1 || curBlock.type == 2)
+		{
+			Camera.camera.position.x = prevSavePos.x;
+			Camera.camera.position.z = prevSavePos.z;
+		} else {
+			prevSavePos = {x: Camera.camera.position.x, z: Camera.camera.position.z};
+			velocity.y = -dy * 20;
+		}
 
 		if (this.usesDeviceMotionControls)
 		{
 			this.controls.update();
 		} else {
-			// this.controls.moveForward(velocity * 1000);
-
 
 			const time = performance.now();
 			if ( this.controls.isLocked === true ) {
-
-				raycaster.ray.origin.copy( this.controls.getObject().position );
-				raycaster.ray.origin.y -= 10;
-
-
-				const intersections = raycaster.intersectObjects( World.scene.children, false );
-
-				const onObject = intersections.length > 0;
-
 				const delta = ( time - prevTime ) / 1000;
 
 				velocity.x -= velocity.x * 10.0 * delta;
-				velocity.y = -dy * 20;
 				velocity.z -= velocity.z * 10.0 * delta;
 
 
