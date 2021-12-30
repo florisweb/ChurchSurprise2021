@@ -2,7 +2,7 @@
 <html>
 	<head>
 		<meta content='width=device-width, initial-scale=1, maximum-scale=1, user-scalable=0' name='viewport'/>
-		<title>WebGLTerrainGenerator</title>
+		<title>Jasmijns fantastische superquirky surprise</title>
 		<style>
 			body {
 				position: fixed;

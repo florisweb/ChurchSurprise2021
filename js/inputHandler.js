@@ -30,8 +30,17 @@ function _InputHandler(_canvas) {
 		_e.preventDefault();
 		return false;
 	});
+
+
 	// const raycaster = new THREE.Raycaster();
-	// let mousePos = new THREE.Vector2();
+	let mousePos = new THREE.Vector2();
+
+	window.addEventListener('mousemove', (event) => {
+		mousePos.x = ( event.clientX / window.innerWidth ) * 2 - 1;
+		mousePos.y = - ( event.clientY / window.innerHeight ) * 2 + 1;
+	});
+
+
 	// mousePos.x = -2;
 	// mousePos.y = -2;
 
@@ -42,6 +51,19 @@ function _InputHandler(_canvas) {
 	// const instructions = document.getElementById( 'instructions' );
 
 	this.usesDeviceMotionControls = false;
+	window.addEventListener('click', () => {
+		raycaster.setFromCamera(mousePos, Camera.camera);
+		const intersects = raycaster.intersectObjects(World.clickables);
+		if (intersects.length < 1) return;
+		intersects.sort((a, b) => a.distance > b.distance);
+		intersects[0].object.component.onclick();
+		console.log(intersects);
+		// World.buildMesh.position.x = Math.round(intersects[0].point.x / blockSize) * blockSize;
+		// World.buildMesh.position.y = (Math.round(intersects[0].point.y / blockSize) + .5) * blockSize;
+		// World.buildMesh.position.z = Math.round(intersects[0].point.z / blockSize) * blockSize;
+	});
+
+
 	if (window.DeviceMotionEvent)
 	{
 		this.usesDeviceMotionControls = true;
@@ -272,17 +294,9 @@ function _InputHandler(_canvas) {
 			Camera.velocity.value[2] = velocity * Math.cos(Camera.rotation.value[1] + Math.PI);
 		}
 
-
-		// Camera.velocity.value[0] = 1;
-		// raycaster.setFromCamera(mousePos, Camera.camera);
-		// const intersects = raycaster.intersectObjects(World.meshes);
-		
-		// window.intersects = intersects;
-		// if (intersects.length < 1) return;
-		// World.buildMesh.position.x = Math.round(intersects[0].point.x / blockSize) * blockSize;
-		// World.buildMesh.position.y = (Math.round(intersects[0].point.y / blockSize) + .5) * blockSize;
-		// World.buildMesh.position.z = Math.round(intersects[0].point.z / blockSize) * blockSize;
 	}
+
+
 
 
 

@@ -5,6 +5,7 @@ let houseDepth = 12;
 let houseX = 51;
 let houseY = 29;
 const wallHeight = 10;
+const doorDX = 5;
 
 for (let x = houseX; x < houseX + houseWidth; x++) 
 {
@@ -19,6 +20,8 @@ for (let x = houseX; x < houseX + houseWidth; x++)
 	MapData[x][houseY].type = 4;
 	MapData[x][houseY].y = wallHeight;
 	MapData[x][houseY + houseDepth].type = 4;
+	if (x == houseX + doorDX) continue;
+	if (x == houseX + doorDX + 1) continue;
 	MapData[x][houseY + houseDepth].y = wallHeight;
 }
 

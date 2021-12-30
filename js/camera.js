@@ -38,12 +38,14 @@ function _Camera() {
 	this.getBlockPos = function() {
 		return {
 			x: Math.round(Camera.camera.position.x / blockSize) + World.worldShape.length / 2,
-			z: Math.round(Camera.camera.position.z / blockSize) + World.worldShape[0].length / 2
+			z: Math.round(Camera.camera.position.z / blockSize) + World.worldShape[0].length / 2,
+			y: Math.round(Camera.camera.position.y / blockSize)
 		}
 	}
-	this.convertBlockCoordsToWorldCoords = function({x, z}) {
+	this.convertBlockCoordsToWorldCoords = function({x, y, z}) {
 		return {
 			x: (x - World.worldShape.length / 2) * blockSize,
+			y: y * blockSize,
 			z: (z - World.worldShape[0].length / 2) * blockSize,
 		}
 	}

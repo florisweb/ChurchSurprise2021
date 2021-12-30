@@ -10,9 +10,11 @@ function _World({tileCount, worldSize}) {
 	this.scene.fog = new THREE.Fog( 0xffffff, 0, 100 );
 	this.renderer = new THREE.WebGLRenderer({antialias: true});
 
-	this.generator = new _WorldGenerator();
+	this.generator = new _WorldGenerator({tileCount: tileCount, worldSize: worldSize});
 
 	this.meshes = [];
+	this.components = [];
+	this.clickables = [];
 
 	this.setup = async function() {
 		this.renderer.setClearColor('#ffffff');

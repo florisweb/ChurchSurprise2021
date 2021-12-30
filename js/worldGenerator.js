@@ -10,13 +10,13 @@ let Perlin2 = new _perlin(5);
 let Perlin3 = new _perlin(10);
 
 
-function _WorldGenerator() {
+function _WorldGenerator({tileCount, worldSize}) {
 	const chunkSize = 64;
-
+	const blockSize = worldSize / tileCount;
 
 	this.createWorldShape = function({tileCount, worldSize}) {
 		let world = [];
-		const blockSize = worldSize / tileCount;
+		
 		const waterHeight = blockSize * 30;
 		for (let x = 0; x < tileCount; x++)
 		{
@@ -45,18 +45,21 @@ function _WorldGenerator() {
 	}
 
 
-	
+	function imageScalarFunction(texture) {
+		texture.wrapS = texture.wrapT = THREE.RepeatWrapping
+    	texture.repeat.set(blockSize, blockSize);
+	}
 	let materials = [
 		{
 			top: new THREE.MeshLambertMaterial({
 				color: 0xffffff, 
 				side: THREE.DoubleSide,
-				map: new THREE.TextureLoader().load('images/blocks/0/top.png'),
+				map: new THREE.TextureLoader().load('images/blocks/0/top.png', imageScalarFunction),
 			}),
 			side: new THREE.MeshLambertMaterial({
 				color: 0xffffff, 
 				side: THREE.DoubleSide,
-				map: new THREE.TextureLoader().load('images/blocks/0/side.png'),
+				map: new THREE.TextureLoader().load('images/blocks/0/side.png', imageScalarFunction),
 			})
 		},
 		{
@@ -113,8 +116,6 @@ function _WorldGenerator() {
 
 
 	this.createChunkMeshes = function({chunkX, chunkZ, tileCount, worldSize, worldShape}) {
-		const blockSize = worldSize / tileCount;
-
 		let blockGeometries = [];
 		for (let material of materials)
 		{
@@ -279,10 +280,56 @@ function _WorldGenerator() {
 		
 	}
 
+	this.createDoor = function() {
+		World.components.push(new RotateComponent({
+			width: blockSize * 2, 
+			height: blockSize * 5, 
+			thickness: blockSize * .2, 
+			material: materials[2].top, 
+			position: {x: 55.5, y: 8, z: 41}
+		}));
+	}
 
+	this.createCompartiment = function() {
+		window.comp = new Compartiment({
+			width: blockSize * 2, 
+			height: blockSize * 4, 
+			depth: blockSize * 1,
+			material: materials[2].top, 
+			position: {x: 57.5, y: 6, z: 75}
+		});
+
+	}
+	this.createDrawers = function() {
+		let drawer1 = new Compartiment({
+			width: blockSize * 2, 
+			height: blockSize * 2, 
+			depth: blockSize * 1,
+			material: materials[2].top, 
+			position: {x: 67, y: 6, z: 36}
+		});
+		let drawer2 = new Compartiment({
+			width: blockSize * 2, 
+			height: blockSize * 2, 
+			depth: blockSize * 1,
+			material: materials[2].top, 
+			position: {x: 67, y: 6, z: 38}
+		});
+		let fridge = new Compartiment({
+			width: blockSize * 2, 
+			height: blockSize * 4, 
+			depth: blockSize * 1,
+			material: materials[2].top, 
+			position: {x: 67, y: 6, z: 40}
+		});
+	}
 
 	this.createWorld = function({tileCount, worldSize, worldShape}) {
 		this.createWaterFloor();
+		this.createDoor();
+		this.createCompartiment();
+		this.createDrawers();
+
 		for (let x = 0; x < tileCount / chunkSize; x++)
 		{
 			for (let z = 0; z < tileCount / chunkSize; z++)
@@ -298,6 +345,144 @@ function _WorldGenerator() {
 		}
 	}
 
+}
+
+
+function Compartiment({width, height, depth, position, material}) {
+	const paneThickness = width * .05;
+	this.door = new RotateComponent({
+		width: depth, 
+		height: height, 
+		thickness: paneThickness,
+		position: {
+			x: position.x + width / 2 + paneThickness,
+			y: position.y + height / 2 + .45,
+			z: position.z + depth / 2 + .1
+		},
+		material: material,
+		initalYRotation: Math.PI * .5
+	});
+
+
+	let geometry = new THREE.BoxGeometry(width, height, paneThickness);
+
+	let geo = new THREE.Geometry();
+
+	let topMesh = new THREE.Mesh(new THREE.PlaneGeometry(width, depth));
+	topMesh.position.y = height;
+	topMesh.rotation.x = Math.PI * .5;
+
+	let bottomMesh = new THREE.Mesh(new THREE.PlaneGeometry(width, depth));
+	bottomMesh.rotation.x = Math.PI * .5;
+
+
+	let side1 = new THREE.Mesh(new THREE.PlaneGeometry(width, height));
+	side1.position.z = -depth / 2;
+	side1.position.y = height / 2;
+	let side2 = new THREE.Mesh(new THREE.PlaneGeometry(width, height));
+	side2.position.z = depth / 2;
+	side2.position.y = height / 2;
+	
+	let side3 = new THREE.Mesh(new THREE.PlaneGeometry(depth, height));
+	side3.position.x = -width / 2;
+	side3.position.y = height / 2;
+	side3.rotation.y = Math.PI * .5;
+
+
+	geo.mergeMesh(topMesh);
+	geo.mergeMesh(bottomMesh);
+	geo.mergeMesh(side1);
+	geo.mergeMesh(side2);
+	geo.mergeMesh(side3);
+
+	geo.mergeVertices();
+	let mesh = new THREE.Mesh(geo, material);
+	
+	applyPositionToMesh(mesh, position);
+	World.scene.add(mesh);
+
+
+	this.rotateY = function(_angle) {
+		mesh.rotation.y = _angle;
+		this.door.setInitalYRotation(_angle + Math.PI * .5);
+		
+		let dPos = Math.sqrt(Math.pow(width / 4, 2) + Math.pow(depth / 4, 2));
+
+		applyPositionToMesh(this.door.mesh, {
+			x: position.x + dPos * Math.sin(_angle),
+			z: position.z + dPos * Math.cos(_angle),
+
+			y: position.y + height / 2 + .45,
+		});
+	}
+}
+
+function applyPositionToMesh(_mesh, _position) {
+	let pos = Camera.convertBlockCoordsToWorldCoords(_position);
+	_mesh.position.x = pos.x;
+	_mesh.position.y = pos.y;
+	_mesh.position.z = pos.z;
+}
+
+
+
+function ClickableComponent(mesh) {
+	this.mesh = mesh;
+	this.mesh.component = this;
+	World.clickables.push(this.mesh);
+}
+
+
+function RotateComponent({width, height, thickness, material, position, initalYRotation = 0}) {
+
+	let geometry = new THREE.BoxGeometry(width, height, thickness);
+	geometry.applyMatrix(new THREE.Matrix4().makeTranslation(width / 2, 0, thickness / 2));
+	let doorMesh = new THREE.Mesh(geometry, material);
+
+	applyPositionToMesh(doorMesh, position);
+	doorMesh.rotation.y = initalYRotation;
+	ClickableComponent.call(this, doorMesh);
+
+	World.scene.add(doorMesh);
+	World.meshes.push(doorMesh);
+
+
+	this.openState = false;
+	this.setInitalYRotation = function(_angle) {
+		initalYRotation = _angle;
+		doorMesh.rotation.y = initalYRotation;
+	}
+
+	this.onclick = function() {
+		if (this.openState) return this.close();
+		return this.open();
+	}
+
+	
+	this.open = function() {
+		this.openState = true;
+		animateToAngle(initalYRotation - .5 * Math.PI);
+	}
+
+	this.close = function() {
+		this.openState = false;
+		animateToAngle(initalYRotation - 0 * Math.PI);
+	}
+
+	const stepSize = .04;
+	function animateToAngle(_toAngle) {
+		let delta = doorMesh.rotation.y - _toAngle;
+		if (Math.abs(delta) < stepSize) 
+		{
+			doorMesh.rotation.y = _toAngle;
+			return;
+		}
+		doorMesh.rotation.y += stepSize * (delta < 0 ? 1 : -1);
+		// doorMesh.rotateY(stepSize * (delta < 0 ? 1 : -1));
+		// console.log(stepSize * (delta < 0 ? 1 : -1));
+
+		requestAnimationFrame(() => {animateToAngle(_toAngle)});
+	}
 }
 
 
