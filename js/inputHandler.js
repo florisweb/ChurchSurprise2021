@@ -1,10 +1,3 @@
-// document.onmousedown = function() { 
-//   InputHandler.mouseDown = true;
-// }
-// document.onmouseup = function() {
-//   InputHandler.mouseDown = false;
-// }
-
 
 
 
@@ -12,6 +5,7 @@ function _InputHandler(_canvas) {
 	const This = this;
 	const HTML = {
 		canvas: _canvas,
+		clickToStartPanel: clickToStart,
 	};
 	const speed = .5;
 
@@ -54,37 +48,41 @@ function _InputHandler(_canvas) {
 	});
 
 
-	if (window.DeviceMotionEvent)
+	if (window.DeviceMotionEvent && window.DeviceMotionEvent.requestPermission)
 	{
 		this.usesDeviceMotionControls = true;
 		this.controls = new THREE.DeviceOrientationControls(Camera.camera);
-		document.body.onclick = () => {
+		HTML.clickToStartPanel.onclick = () => {
+			if (!window.DeviceMotionEvent || !window.DeviceMotionEvent.requestPermission) return initiateNonDeviceMotionControls();
 			window.DeviceMotionEvent.requestPermission()
 			  .then(response => {
 			    console.log(response);
+			    HTML.clickToStartPanel.classList.add('hide');
 			  }
 			);
 		}
-	} else {
+	} else initiateNonDeviceMotionControls();
 
-		this.controls = new PointerLockControls(Camera.camera, document.body);
+
+	function initiateNonDeviceMotionControls() {
+		This.usesDeviceMotionControls = false;
+		This.controls = new PointerLockControls(Camera.camera, document.body);
 		// instructions.addEventListener( 'click', function () {
 		document.body.addEventListener( 'click', function () {
 			This.controls.lock();
 		});
 
-		this.controls.addEventListener( 'lock', function () {
-			// instructions.style.display = 'none';
-			// blocker.style.display = 'none';
+		This.controls.addEventListener( 'lock', function () {
+			HTML.clickToStartPanel.classList.add('hide');
 		});
 
-		this.controls.addEventListener( 'unlock', function () {
-			// blocker.style.display = 'block';
-			// instructions.style.display = '';
+		This.controls.addEventListener( 'unlock', function () {
+			HTML.clickToStartPanel.classList.remove('hide');
 		});
 
 
-		World.scene.add(this.controls.getObject());
+		World.scene.add(This.controls.getObject());
+
 	}
 
 

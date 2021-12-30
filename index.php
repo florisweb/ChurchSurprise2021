@@ -40,10 +40,61 @@
 				z-index: 1000000;
 			}
 
+			.text {
+				font-family: "Lucida Sans Unicode", "Lucida Grande", sans-serif;
+				color: #777;
+				font-size: 15px;
+			}
+			.text.header {
+				font-size: 25px;
+			}
+
+
+			.pageOverlay {
+				position: fixed;
+				width: 100vw;
+				height: 110vh;
+				left:  0;
+				top:  0;
+				background: rgba(255, 255, 255, .9);
+				transition: all .3s;
+				z-index: 1000001;				
+			}
+			.pageOverlay .text {
+				position: relative;
+				text-align: center;
+				width:  100%;
+				top:  45vh;
+				transform: translateY(-50%);
+			}
+			.pageOverlay.hide {
+				transform: scale(1.2);
+				opacity: 0;
+				pointer-events: none;
+			}
+
+			#aLittleEarlyMessage.pageOverlay {
+				background: #fff;
+			}
+
 		</style>
 	</head>
 	<body class='noselect'>
-	
+		<div class='pageOverlay' id='clickToStart'>
+			<div class='text header'>Click to Enter</div>
+			<div class='text'>Welkom in Jasmijns (Quirky) Wereld</div>
+		</div>
+		<div class='pageOverlay' id='aLittleEarlyMessage'>
+			<div class='text header'>Hey there</div>
+			<div class='text'>A little early don't you think?</div>
+		</div>
+
+		<script>
+			if ((new Date().getFullYear() == 2022 && new Date().getHours() >= 20) || localStorage.aLittleEarlyMessageSupressor)
+			{
+				aLittleEarlyMessage.classList.add('hide');
+			}
+		</script>
 
 		<div class='crossair'></div>
 		<script src='js/three.js'></script>

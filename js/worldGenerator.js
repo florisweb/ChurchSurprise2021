@@ -306,7 +306,7 @@ function _WorldGenerator({tileCount, worldSize}) {
 			height: blockSize * 2, 
 			depth: blockSize * 2,
 			material: materials[2].top, 
-			position: {x: 67, y: 6, z: 35.5}
+			position: {x: 67, y: 6, z: 35.4}
 		});
 		drawer1.rotateY(Math.PI);
 		let drawer2 = new Compartiment({
@@ -314,7 +314,7 @@ function _WorldGenerator({tileCount, worldSize}) {
 			height: blockSize * 2, 
 			depth: blockSize * 2,
 			material: materials[2].top, 
-			position: {x: 67, y: 6, z: 37.5}
+			position: {x: 67, y: 6, z: 37.4}
 		});
 		drawer2.rotateY(Math.PI);
 		let fridge = new Compartiment({
@@ -322,7 +322,7 @@ function _WorldGenerator({tileCount, worldSize}) {
 			height: blockSize * 4, 
 			depth: blockSize * 2,
 			material: materials[2].top, 
-			position: {x: 67, y: 6, z: 39.5}
+			position: {x: 67, y: 6, z: 39.4}
 		});
 		fridge.rotateY(Math.PI);
 
