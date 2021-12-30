@@ -304,24 +304,28 @@ function _WorldGenerator({tileCount, worldSize}) {
 		let drawer1 = new Compartiment({
 			width: blockSize * 2, 
 			height: blockSize * 2, 
-			depth: blockSize * 1,
+			depth: blockSize * 2,
 			material: materials[2].top, 
-			position: {x: 67, y: 6, z: 36}
+			position: {x: 67, y: 6, z: 35.5}
 		});
+		drawer1.rotateY(Math.PI);
 		let drawer2 = new Compartiment({
 			width: blockSize * 2, 
 			height: blockSize * 2, 
-			depth: blockSize * 1,
+			depth: blockSize * 2,
 			material: materials[2].top, 
-			position: {x: 67, y: 6, z: 38}
+			position: {x: 67, y: 6, z: 37.5}
 		});
+		drawer2.rotateY(Math.PI);
 		let fridge = new Compartiment({
 			width: blockSize * 2, 
 			height: blockSize * 4, 
-			depth: blockSize * 1,
+			depth: blockSize * 2,
 			material: materials[2].top, 
-			position: {x: 67, y: 6, z: 40}
+			position: {x: 67, y: 6, z: 39.5}
 		});
+		fridge.rotateY(Math.PI);
+
 	}
 
 	this.createWorld = function({tileCount, worldSize, worldShape}) {

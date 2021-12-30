@@ -29,12 +29,23 @@
 			                                  supported by Chrome and Opera */
 			}
 
+
+			.crossair {
+				position: fixed;
+				left: calc(50vw - 2px);
+				top: calc(50vh - 2px);
+				width: 4px;
+				height: 4px;
+				background: rgba(200, 200, 200, .9);
+				z-index: 1000000;
+			}
+
 		</style>
 	</head>
 	<body class='noselect'>
 	
 
-		
+		<div class='crossair'></div>
 		<script src='js/three.js'></script>
 		<script src='js/controls/deviceOrientationControls.js'></script>
 		<script src='js/controls/mouseControls.js'></script>
