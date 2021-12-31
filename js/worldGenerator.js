@@ -10,9 +10,10 @@ let Perlin2 = new _perlin(5);
 let Perlin3 = new _perlin(10);
 
 
+let blockSize = 0;
 function _WorldGenerator({tileCount, worldSize}) {
 	const chunkSize = 64;
-	const blockSize = worldSize / tileCount;
+	blockSize = worldSize / tileCount;
 
 	this.createWorldShape = function({tileCount, worldSize}) {
 		let world = [];
@@ -353,15 +354,15 @@ function _WorldGenerator({tileCount, worldSize}) {
 
 
 function Compartiment({width, height, depth, position, material}) {
-	const paneThickness = width * .05;
+	const paneThickness = width * .1;
 	this.door = new RotateComponent({
 		width: depth, 
 		height: height, 
 		thickness: paneThickness,
 		position: {
-			x: position.x + width / 2 + paneThickness,
-			y: position.y + height / 2 + .45,
-			z: position.z + depth / 2 + .1
+			x: position.x + width / blockSize / 2,
+			y: position.y + height / blockSize / 2,
+			z: position.z + depth / blockSize / 2,
 		},
 		material: material,
 		initalYRotation: Math.PI * .5
@@ -401,28 +402,25 @@ function Compartiment({width, height, depth, position, material}) {
 
 	geo.mergeVertices();
 	let mesh = new THREE.Mesh(geo, material);
+	this.mesh = mesh;
 	
 	applyPositionToMesh(mesh, position);
 	World.scene.add(mesh);
 
 
 	this.rotateY = function(_angle) {
-		mesh.rotation.y = _angle;
-		this.door.setInitalYRotation(_angle + Math.PI * .5);
+		mesh.rotation.y += _angle;
+		this.door.setInitalYRotation(mesh.rotation.y + Math.PI * .5);
 		
-		let dPos = Math.sqrt(Math.pow(width / 4, 2) + Math.pow(depth / 4, 2));
-
-		applyPositionToMesh(this.door.mesh, {
-			x: position.x + dPos * Math.sin(_angle),
-			z: position.z + dPos * Math.cos(_angle),
-
-			y: position.y + height / 2 + .45,
-		});
+		let delta = mesh.position.clone().multiplyScalar(-1).add(this.door.mesh.position);
+		delta.applyAxisAngle(new THREE.Vector3(0, 1, 0), _angle);
+		let newPos = mesh.position.clone().add(delta);
+		this.door.mesh.position.set(newPos.x, newPos.y, newPos.z);
 	}
 }
 
 function applyPositionToMesh(_mesh, _position) {
-	let pos = Camera.convertBlockCoordsToWorldCoords(_position);
+	let pos = Camera.convertBlockCoordsToWorldCoords({x: _position.x, y: _position.y, z: _position.z});
 	_mesh.position.x = pos.x;
 	_mesh.position.y = pos.y;
 	_mesh.position.z = pos.z;
@@ -438,7 +436,6 @@ function ClickableComponent(mesh) {
 
 
 function RotateComponent({width, height, thickness, material, position, initalYRotation = 0}) {
-
 	let geometry = new THREE.BoxGeometry(width, height, thickness);
 	geometry.applyMatrix(new THREE.Matrix4().makeTranslation(width / 2, 0, thickness / 2));
 	let doorMesh = new THREE.Mesh(geometry, material);
@@ -482,8 +479,6 @@ function RotateComponent({width, height, thickness, material, position, initalYR
 			return;
 		}
 		doorMesh.rotation.y += stepSize * (delta < 0 ? 1 : -1);
-		// doorMesh.rotateY(stepSize * (delta < 0 ? 1 : -1));
-		// console.log(stepSize * (delta < 0 ? 1 : -1));
 
 		requestAnimationFrame(() => {animateToAngle(_toAngle)});
 	}

@@ -56,7 +56,7 @@ function _InputHandler(_canvas) {
 			if (!window.DeviceMotionEvent || !window.DeviceMotionEvent.requestPermission) return initiateNonDeviceMotionControls();
 			window.DeviceMotionEvent.requestPermission()
 			  .then(response => {
-			    console.log(response);
+			  	if (response != 'granted') return initiateNonDeviceMotionControls();
 			    HTML.clickToStartPanel.classList.add('hide');
 			  }
 			);
