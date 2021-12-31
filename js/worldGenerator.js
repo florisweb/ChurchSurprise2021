@@ -59,6 +59,13 @@ function _WorldGenerator({tileCount, worldSize}) {
 			alphaMap: new THREE.TextureLoader().load('images/customMaterials/karatePoppetjeAlpha.png'),
 			transparent: true,
 			map: new THREE.TextureLoader().load('images/customMaterials/karatePoppetje.png'),
+		}),
+		recipe: new THREE.MeshLambertMaterial({
+			color: 0xffffff, 
+			side: THREE.DoubleSide,
+			alphaMap: new THREE.TextureLoader().load('images/customMaterials/recipeAlpha.png'),
+			transparent: true,
+			map: new THREE.TextureLoader().load('images/customMaterials/recipe.png'),
 		})
 	}
 
@@ -291,7 +298,12 @@ function _WorldGenerator({tileCount, worldSize}) {
 		applyPositionToMesh(mesh, _pos);
 		World.scene.add(mesh);
 	}
-
+	this.createRecipeMessage = function(_pos) {
+		let geo = new THREE.PlaneGeometry(blockSize * 1.8, blockSize * 2.5);
+		let mesh = new THREE.Mesh(geo, customMaterials.recipe);
+		applyPositionToMesh(mesh, _pos);
+		World.scene.add(mesh);
+	}
 
 
 	this.createWorld = function({tileCount, worldSize, worldShape}) {
@@ -299,7 +311,8 @@ function _WorldGenerator({tileCount, worldSize}) {
 		this.createDoor();
 		this.createDrawers();
 		this.createKarateGravity({x: 61, y: 8, z: 41.51});
-		this.createKarateGravity({x: 59, y: 8, z: 29.51});
+		this.createKarateGravity({x: 55, y: 8, z: 33.51});
+		this.createRecipeMessage({x: 59, y: 8.5, z: 33.51});
 
 		for (let x = 0; x < tileCount / chunkSize; x++)
 		{
