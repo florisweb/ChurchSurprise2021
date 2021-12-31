@@ -263,6 +263,40 @@ function _WorldGenerator({tileCount, worldSize}) {
 		}));
 	}
 
+
+	this.createFurnace = function() {
+		new PanComponent({
+			position: {x: houseX + 9.4, y: 8, z: 35.4}, 
+			radius: blockSize * .3, 
+			height: blockSize * .5, 
+			material: materials[5].side,
+			contentMaterial: materials[0].top,
+		});
+		new PanComponent({
+			position: {x: houseX + 8.9, y: 8, z: 35.4}, 
+			radius: blockSize * .3, 
+			height: blockSize * .5, 
+			material: materials[5].side,
+			contentMaterial: materials[1].top,
+		});
+		new PanComponent({
+			position: {x: houseX + 8.9, y: 8, z: 35.9}, 
+			radius: blockSize * .3, 
+			height: blockSize * .5, 
+			material: materials[5].side,
+			contentMaterial: materials[2].top,
+		});
+		new PanComponent({
+			position: {x: houseX + 9.4, y: 8, z: 35.9}, 
+			radius: blockSize * .3, 
+			height: blockSize * .5, 
+			material: materials[5].side,
+			contentMaterial: materials[3].top,
+		});
+
+	}
+
+
 	this.createDrawers = function() {
 		const y = 6.45;
 		const x = houseX + 9.7;
@@ -310,6 +344,9 @@ function _WorldGenerator({tileCount, worldSize}) {
 		this.createWaterFloor();
 		this.createDoor();
 		this.createDrawers();
+		this.createFurnace();
+
+
 		this.createKarateGravity({x: 61, y: 8, z: 41.51});
 		this.createKarateGravity({x: 55, y: 8, z: 33.51});
 		this.createRecipeMessage({x: 59, y: 8.5, z: 33.51});
@@ -398,12 +435,7 @@ function Compartiment({width, height, depth, position, material}) {
 	}
 }
 
-function applyPositionToMesh(_mesh, _position) {
-	let pos = Camera.convertBlockCoordsToWorldCoords({x: _position.x, y: _position.y, z: _position.z});
-	_mesh.position.x = pos.x;
-	_mesh.position.y = pos.y;
-	_mesh.position.z = pos.z;
-}
+
 
 
 
@@ -465,3 +497,102 @@ function RotateComponent({width, height, thickness, material, position, initalYR
 
 
 
+
+function PanComponent({radius, height, material, contentMaterial, position}) {
+	const This = this;
+	const geometry = new THREE.CylinderGeometry( radius, radius * 1, height, 32, 1, true);
+	let bottomMesh = new THREE.Mesh(new THREE.CircleGeometry(radius, 32));
+	bottomMesh.rotation.x = Math.PI * .5;
+	bottomMesh.position.y = -height / 2;
+	geometry.mergeMesh(bottomMesh);
+	geometry.mergeVertices();
+
+	let mesh = new THREE.Mesh(geometry, material);
+	this.mesh = mesh;
+	let contentMesh = new THREE.Mesh(new THREE.CircleGeometry(radius, 32), contentMaterial);
+	contentMesh.rotation.x = Math.PI * .5;
+	contentMesh.position.y = -height / 2 + Math.random() * height;
+	
+	World.scene.add(this.mesh);
+	World.scene.add(contentMesh);
+
+
+	this.setPosition = function(_pos) {
+		applyPositionToMesh(mesh, _pos);
+		applyPositionToMesh(contentMesh, _pos);
+	}
+
+	this.animateToPos = function(_pos) {
+		animateCoord(Camera.convertBlockCoordsToWorldCoords(_pos));
+	}
+
+
+	const stepSize = .2;
+	function animateCoord(_finalCoord) {
+		let dx = mesh.position.x - _finalCoord.x;
+		let dy = mesh.position.y - _finalCoord.y;
+		let dz = mesh.position.z - _finalCoord.z;
+
+
+		if (Math.pow(dx, 2) + Math.pow(dy, 2) + Math.pow(dz, 2) < stepSize) 
+		{
+			setPos(_finalCoord);
+			return;
+		}
+		
+		setPos({
+			x: mesh.position.x - stepSize * dx,
+			y: mesh.position.y - stepSize * dy,
+			z: mesh.position.z - stepSize * dz,
+		});
+
+		requestAnimationFrame(() => {animateCoord(_finalCoord)});
+	}
+	function setPos(_pos) {
+		let deltaX = mesh.position.x - _pos.x;
+		let deltaY = mesh.position.y - _pos.y;
+		let deltaZ = mesh.position.z - _pos.z;
+		mesh.position.x = _pos.x;
+		mesh.position.y = _pos.y;
+		mesh.position.z = _pos.z;
+		contentMesh.position.x += deltaX;
+		contentMesh.position.y += deltaY;
+		contentMesh.position.z += deltaZ;
+	}
+
+
+
+	// this.setPosition({...position, y: 100});
+	this.setPosition(position);
+	// window.w = this;
+	// setTimeout(() => {
+	// 	This.animateToPos(position);
+	// }, 4000);
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+function applyPositionToMesh(_mesh, _position) {
+	let pos = Camera.convertBlockCoordsToWorldCoords({x: _position.x, y: _position.y, z: _position.z});
+	_mesh.position.x = pos.x;
+	_mesh.position.y = pos.y;
+	_mesh.position.z = pos.z;
+}

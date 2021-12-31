@@ -57,7 +57,8 @@
 				top:  0;
 				background: #fff;
 				transition: all .3s;
-				z-index: 1000001;				
+				z-index: 1000001;
+				display: none;			
 			}
 			.overlayPage .text {
 				position: relative;
@@ -188,7 +189,7 @@
 			</div>
 			<div class="panel hide specialPanel" id='cookIndicator'>
 				<img src='images/cookIcon.png' class='icon'>
-				<div class='text header'>4 x Bibimbap: 15 min</div>
+				<div class='text header'>3 x Bibimbap: 15 min</div>
 			</div>
 			<div class="panel hide">
 				<div class='text header'>Le restaurant de Jasmin </div>
@@ -196,42 +197,17 @@
 			</div>
 			<div class="panel buyer hide">
 				<div class='text header'>+06 12345678</div>
-				<div class='text'>Wij zouden graag 4 x Bibimbap bestellen, kan dat?</div>
+				<div class='text'>Wij zouden graag 3 x Bibimbap bestellen, kan dat?</div>
 			</div>
 			<div class="panel hide">
 				<div class='text header'>Le restaurant de Jasmin </div>
-				<div class='text'>Uiteraard, 4 x Bibimbap staat over 15 minuten voor u klaar. Wilt u het laten bezorgen of afhalen?</div>
+				<div class='text'>Uiteraard, 3 x Bibimbap staat over 15 minuten voor u klaar. Wilt u het laten bezorgen of afhalen?</div>
 			</div>
 			<div class="panel buyer hide">
 				<div class='text header'>+06 12345678</div>
 				<div class='text'>Ik kom het ophalen, tot zo.</div>
 			</div>
 		</div>
-
-		<script>
-			const CallManager = new function() {
-				let finished = false;
-				this.showNextMessage = function() {
-					if (finished) return;
-					let message = document.querySelector('#callOverlay .panel.hide:not(#callIndicator, #cookIndicator)');
-					if (!message) 
-					{
-						for (let element of document.querySelectorAll("#callOverlay .panel")) element.classList.add('hide');
-						finished = true;
-						return cookIndicator.classList.remove('hide');
-					}
-					message.classList.remove('hide');
-					setTimeout(CallManager.showNextMessage, 1000 * 5);
-				}
-
-				this.startCall = function() {
-					let callIndicator = document.querySelector('#callOverlay #callIndicator.panel');
-					callIndicator.classList.add('hide');
-					setTimeout(CallManager.showNextMessage, 1000);
-				}
-			}
-			
-		</script>
 
 
 		<div class='overlayPage' id='clickToStart'>
@@ -241,15 +217,13 @@
 		<div class='overlayPage' id='aLittleEarlyMessage'>
 			<div class='text header'>Hey there</div>
 			<div class='text'>A little early don't you think?</div>
+			<script>
+				if ((new Date().getFullYear() == 2022 && new Date().getHours() >= 20) || localStorage.aLittleEarlyMessageSupressor)
+				{
+					aLittleEarlyMessage.classList.add('hide');
+				}
+			</script>
 		</div>
-		<script>
-			if ((new Date().getFullYear() == 2022 && new Date().getHours() >= 20) || localStorage.aLittleEarlyMessageSupressor)
-			{
-				aLittleEarlyMessage.classList.add('hide');
-			}
-		</script>
-
-
 
 
 
@@ -267,5 +241,6 @@
 		<script src='js/world.js'></script>
 		<script src='js/camera.js'></script>
 		<script src='js/main.js'></script>
+		<script src='js/game.js'></script>
 	</body>
 </html>

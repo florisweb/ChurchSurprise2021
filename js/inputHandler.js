@@ -8,7 +8,7 @@ function _InputHandler(_canvas) {
 		clickToStartPanel: clickToStart,
 	};
 	// const speed = .5;
-	const speed = 2;
+	const speed = 1;
 	const shiftSpeedModifier = .5;
 
 	let raycaster = new THREE.Raycaster( new THREE.Vector3(), new THREE.Vector3( 0, - 1, 0 ), 0, 10 );
@@ -89,16 +89,7 @@ function _InputHandler(_canvas) {
 	}
 
 
-	
 
-
-
-	// this.settings = new function() {
-	// 	this.dragSpeed = 1;
-	// 	this.scrollSpeed = .005
-	// }
-	// assignMouseDrager();
-	// assignMouseMoveHandler();
 
 
 	
@@ -174,19 +165,10 @@ function _InputHandler(_canvas) {
 
 	};
 
-	window.addEventListener( 'keydown', onKeyDown );
-	window.addEventListener( 'keyup', onKeyUp );
+	window.addEventListener('keydown', onKeyDown);
+	window.addEventListener('keyup', onKeyUp);
 
 
-
-	// HTML.canvas.addEventListener('mousemove', function(_e) {
-	// 	// InputHanlder.raycaster
-	// 	// mousePos.x = (_e.clientX / window.innerWidth) * 2 - 1;
-	// 	// mousePos.y = -(_e.clientY / window.innerHeight) * 2 + 1;
-
-	// });
-
-	// let resetColorValue = false;
 
 	const blockSize = World.size / World.tileCount;
 	let prevTime = performance.now();
@@ -222,8 +204,8 @@ function _InputHandler(_canvas) {
 				velocity.z -= velocity.z * 10.0 * delta;
 
 
-				direction.z = Number( moveForward ) - Number( moveBackward );
-				direction.x = Number( moveRight ) - Number( moveLeft );
+				direction.z = Number(moveForward) - Number(moveBackward);
+				direction.x = Number(moveRight) - Number(moveLeft);
 				direction.normalize(); // this ensures consistent movements in all directions
 
 				if ( moveForward || moveBackward ) velocity.z -= direction.z * 100.0 * delta * speed;
@@ -242,15 +224,6 @@ function _InputHandler(_canvas) {
 
 
 
-
-
-
-
-
-
-
-
-
 		// Forwards movement
 		if (this.usesDeviceMotionControls && mouseDown)
 		{
@@ -258,105 +231,4 @@ function _InputHandler(_canvas) {
 			Camera.velocity.value[2] = velocity * Math.cos(Camera.rotation.value[1] + Math.PI);
 		}
 	}
-
-
-
-
-
-
-
-
-
-	// HTML.canvas.addEventListener('wheel', function(event) {
-		// let mousePosition = new Vector([
-		// 	event.offsetX / HTML.canvas.offsetWidth * HTML.canvas.width, 
-		// 	event.offsetY / HTML.canvas.offsetHeight * HTML.canvas.height
-		// ]);
-
-		// let startWorldPosition = RenderEngine.camera.canvasPosToWorldPos(mousePosition);
-
-	//     Camera.zoom += event.deltaY * InputHandler.settings.scrollSpeed;
-	//     if (Camera.zoom < .1) Camera.zoom = .1;
-	    
-
-	//     // let endWorldPosition = RenderEngine.camera.canvasPosToWorldPos(mousePosition);
-	//     // RenderEngine.camera.position.add(endWorldPosition.difference(startWorldPosition));
-	    
-	//     return false; 
-	// }, false);
-
-	// HTML.canvas.addEventListener('click', function() {
-	// 	InputHandler.update();
-	// });
-
-
-
-
-	// function assignMouseMoveHandler() {
-	// 	HTML.canvas.addEventListener("mousemove", 
-	// 	    function (_event) {
-	// 	    	let mousePosition = new Vector([
-	// 				_event.offsetX / HTML.canvas.offsetWidth * HTML.canvas.width, 
-	// 				_event.offsetY / HTML.canvas.offsetHeight * HTML.canvas.height
-	// 			]);
-	//     		let worldPosition = RenderEngine.camera.canvasPosToWorldPos(mousePosition);
-
-	//     		Builder.handleMouseMove(worldPosition);
-	// 	    	Server.sendPacket(0, worldPosition.value);
-	// 	    }
-	// 	);
-	// }
-
-
-
-
-
-
-
-
-	// function assignMouseDrager() {
-	// 	HTML.canvas.addEventListener("mousedown", 
-	//     	function (_event) {
-	//       		InputHandler.draging = true;
-	//     	}
-	//   	);
-
-	//   	HTML.canvas.addEventListener("mouseup", stopDraging);
-
-	//   	let prevDragVector = false;
-	// 	HTML.canvas.addEventListener("mousemove", 
-	// 	    function (_event) {
-	// 	    	if (!InputHandler.draging) return;
-	// 	    	if (!InputHandler.mouseDown) return stopDraging();
-	// 	    	RenderEngine.camera.follow(false);
-
-	// 	    	if (prevDragVector)
-	// 	    	{
-	// 	    		let deltaPos = new Vector([_event.screenX, _event.screenY]).difference(prevDragVector);
-	// 	    		let moveVector = deltaPos.scale(InputHandler.settings.dragSpeed * RenderEngine.camera.zoom);
-	// 	    		RenderEngine.camera.position.add(moveVector);
-	// 	    	}
-
-	// 	    	prevDragVector = new Vector([_event.screenX, _event.screenY]);
-	// 	    }
-	// 	);
-		
-	// 	function stopDraging() {
-	// 		InputHandler.draging = false;
-	//       	prevDragVector = false;
-	// 	}
-	// }
-
 }
-
-
-
-
-// document.body.addEventListener("keydown", function(_e) {
-// 	KeyHandler.keys[_e.key] = true;
-// 	KeyHandler.handleKeys(_e);
-// });
-
-// document.body.addEventListener("keyup", function(_e) {
-// 	KeyHandler.keys[_e.key] = false;
-// });
