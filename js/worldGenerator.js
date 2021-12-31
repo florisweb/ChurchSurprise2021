@@ -110,6 +110,18 @@ function _WorldGenerator({tileCount, worldSize}) {
 				side: THREE.DoubleSide,
 				map: new THREE.TextureLoader().load('images/blocks/4/side.png'),
 			})
+		},
+		{
+			top: new THREE.MeshLambertMaterial({
+				color: 0xffffff, 
+				side: THREE.DoubleSide,
+				map: new THREE.TextureLoader().load('images/blocks/5/top.png'),
+			}),
+			side: new THREE.MeshLambertMaterial({
+				color: 0xffffff,
+				side: THREE.DoubleSide,
+				map: new THREE.TextureLoader().load('images/blocks/5/side.png'),
+			})
 		}
 	];
 		
@@ -296,7 +308,7 @@ function _WorldGenerator({tileCount, worldSize}) {
 			width: blockSize * 2, 
 			height: blockSize * 4, 
 			depth: blockSize * 1,
-			material: materials[2].top, 
+			material: materials[5].side, 
 			position: {x: 57.5, y: 6, z: 75}
 		});
 
@@ -306,7 +318,7 @@ function _WorldGenerator({tileCount, worldSize}) {
 			width: blockSize * 2, 
 			height: blockSize * 2, 
 			depth: blockSize * 2,
-			material: materials[2].top, 
+			material: materials[5].side,
 			position: {x: 67, y: 6, z: 35.4}
 		});
 		drawer1.rotateY(Math.PI);
@@ -314,7 +326,7 @@ function _WorldGenerator({tileCount, worldSize}) {
 			width: blockSize * 2, 
 			height: blockSize * 2, 
 			depth: blockSize * 2,
-			material: materials[2].top, 
+			material: materials[5].side,
 			position: {x: 67, y: 6, z: 37.4}
 		});
 		drawer2.rotateY(Math.PI);
@@ -322,7 +334,7 @@ function _WorldGenerator({tileCount, worldSize}) {
 			width: blockSize * 2, 
 			height: blockSize * 4, 
 			depth: blockSize * 2,
-			material: materials[2].top, 
+			material: materials[5].side,
 			position: {x: 67, y: 6, z: 39.4}
 		});
 		fridge.rotateY(Math.PI);
