@@ -252,43 +252,35 @@ function _WorldGenerator({tileCount, worldSize}) {
 			height: blockSize * 4.3, 
 			thickness: blockSize * .2, 
 			material: customMaterials.door,
-			position: {x: 55.51, y: 8, z: 41}
+			position: {x: 57.51, y: 8, z: 41}
 		}));
 	}
 
-	this.createCompartiment = function() {
-		window.comp = new Compartiment({
-			width: blockSize * 2, 
-			height: blockSize * 4, 
-			depth: blockSize * 1,
-			material: materials[5].side, 
-			position: {x: 57.5, y: 6, z: 75}
-		});
-
-	}
 	this.createDrawers = function() {
+		const y = 6.45;
+		const x = houseX + 9.7;
 		let drawer1 = new Compartiment({
-			width: blockSize * 2, 
-			height: blockSize * 2, 
+			width: blockSize * 1.5, 
+			height: blockSize * 1.3, 
 			depth: blockSize * 2,
 			material: materials[5].side,
-			position: {x: 67, y: 6, z: 35.4}
+			position: {x: x, y: y, z: 35.4}
 		});
 		drawer1.rotateY(Math.PI);
 		let drawer2 = new Compartiment({
-			width: blockSize * 2, 
-			height: blockSize * 2, 
+			width: blockSize * 1.5, 
+			height: blockSize * 1.3, 
 			depth: blockSize * 2,
 			material: materials[5].side,
-			position: {x: 67, y: 6, z: 37.4}
+			position: {x: x, y: y, z: 37.401}
 		});
 		drawer2.rotateY(Math.PI);
 		let fridge = new Compartiment({
-			width: blockSize * 2, 
-			height: blockSize * 4, 
-			depth: blockSize * 2,
+			width: blockSize * 1.5, 
+			height: blockSize * 3.5, 
+			depth: blockSize * 1.5,
 			material: materials[5].side,
-			position: {x: 67, y: 6, z: 39.4}
+			position: {x: x, y: y, z: 39.4}
 		});
 		fridge.rotateY(Math.PI);
 	}
@@ -300,13 +292,14 @@ function _WorldGenerator({tileCount, worldSize}) {
 		World.scene.add(mesh);
 	}
 
+
+
 	this.createWorld = function({tileCount, worldSize, worldShape}) {
 		this.createWaterFloor();
 		this.createDoor();
-		this.createCompartiment();
 		this.createDrawers();
 		this.createKarateGravity({x: 61, y: 8, z: 41.51});
-		this.createKarateGravity({x: 54, y: 8, z: 29.51});
+		this.createKarateGravity({x: 59, y: 8, z: 29.51});
 
 		for (let x = 0; x < tileCount / chunkSize; x++)
 		{

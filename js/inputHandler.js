@@ -7,7 +7,8 @@ function _InputHandler(_canvas) {
 		canvas: _canvas,
 		clickToStartPanel: clickToStart,
 	};
-	const speed = .5;
+	// const speed = .5;
+	const speed = 2;
 	const shiftSpeedModifier = .5;
 
 	let raycaster = new THREE.Raycaster( new THREE.Vector3(), new THREE.Vector3( 0, - 1, 0 ), 0, 10 );
@@ -68,9 +69,10 @@ function _InputHandler(_canvas) {
 	function initiateNonDeviceMotionControls() {
 		This.usesDeviceMotionControls = false;
 		This.controls = new PointerLockControls(Camera.camera, document.body);
-		// instructions.addEventListener( 'click', function () {
+
 		document.body.addEventListener( 'click', function () {
 			This.controls.lock();
+			setTimeout(CallManager.startCall, 1000 * 5);
 		});
 
 		This.controls.addEventListener( 'lock', function () {
