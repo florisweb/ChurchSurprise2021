@@ -50,80 +50,33 @@ function _WorldGenerator({tileCount, worldSize}) {
 		texture.wrapS = texture.wrapT = THREE.RepeatWrapping
     	texture.repeat.set(blockSize, blockSize);
 	}
-	let materials = [
-		{
-			top: new THREE.MeshLambertMaterial({
-				color: 0xffffff, 
-				side: THREE.DoubleSide,
-				map: new THREE.TextureLoader().load('images/blocks/0/top.png', imageScalarFunction),
-			}),
-			side: new THREE.MeshLambertMaterial({
-				color: 0xffffff, 
-				side: THREE.DoubleSide,
-				map: new THREE.TextureLoader().load('images/blocks/0/side.png', imageScalarFunction),
-			})
-		},
-		{
-			top: new THREE.MeshLambertMaterial({
-				color: 0xffffff, 
-				side: THREE.DoubleSide,
-				map: new THREE.TextureLoader().load('images/blocks/1/top.png'),
-			}),
-			side: new THREE.MeshLambertMaterial({
-				color: 0xffffff, 
-				side: THREE.DoubleSide,
-				map: new THREE.TextureLoader().load('images/blocks/1/side.png'),
-			})
-		},
-		{
-			top: new THREE.MeshLambertMaterial({
-				color: 0xffffff, 
-				side: THREE.DoubleSide,
-				map: new THREE.TextureLoader().load('images/blocks/2/top.png'),
-			}),
-			side: new THREE.MeshLambertMaterial({
-				color: 0xffffff, 
-				side: THREE.DoubleSide,
-				map: new THREE.TextureLoader().load('images/blocks/2/side.png'),
-			})
-		},
-		{
-			top: new THREE.MeshLambertMaterial({
-				color: 0xffffff, 
-				side: THREE.DoubleSide,
-				map: new THREE.TextureLoader().load('images/blocks/3/top.png'),
-			}),
-			side: new THREE.MeshLambertMaterial({
-				color: 0xffffff, 
-				side: THREE.DoubleSide,
-				map: new THREE.TextureLoader().load('images/blocks/3/side.png'),
-			})
-		},
-		{
-			top: new THREE.MeshLambertMaterial({
-				color: 0xffffff, 
-				side: THREE.DoubleSide,
-				map: new THREE.TextureLoader().load('images/blocks/4/top.png'),
-			}),
-			side: new THREE.MeshLambertMaterial({
-				color: 0xffffff,
-				side: THREE.DoubleSide,
-				map: new THREE.TextureLoader().load('images/blocks/4/side.png'),
-			})
-		},
-		{
-			top: new THREE.MeshLambertMaterial({
-				color: 0xffffff, 
-				side: THREE.DoubleSide,
-				map: new THREE.TextureLoader().load('images/blocks/5/top.png'),
-			}),
-			side: new THREE.MeshLambertMaterial({
-				color: 0xffffff,
-				side: THREE.DoubleSide,
-				map: new THREE.TextureLoader().load('images/blocks/5/side.png'),
-			})
-		}
-	];
+	let materials = [];
+	let customMaterials = {
+		door: loadImageMaterial('images/customMaterials/door.png'),
+		karate: new THREE.MeshLambertMaterial({
+			color: 0xffffff, 
+			side: THREE.DoubleSide,
+			alphaMap: new THREE.TextureLoader().load('images/customMaterials/karatePoppetjeAlpha.png'),
+			transparent: true,
+			map: new THREE.TextureLoader().load('images/customMaterials/karatePoppetje.png'),
+		})
+	}
+
+	for (let i = 0; i <= 7; i++)
+	{
+		materials[i] = {
+			top: loadImageMaterial('images/blocks/' + i + '/top.png', imageScalarFunction),
+			side: loadImageMaterial('images/blocks/' + i + '/side.png', imageScalarFunction),
+		};
+	}
+
+	function loadImageMaterial(_url, _scaleFunc) {
+		 return new THREE.MeshLambertMaterial({
+			color: 0xffffff, 
+			side: THREE.DoubleSide,
+			map: new THREE.TextureLoader().load(_url, _scaleFunc),
+		});
+	}
 		
 
 
@@ -296,10 +249,10 @@ function _WorldGenerator({tileCount, worldSize}) {
 	this.createDoor = function() {
 		World.components.push(new RotateComponent({
 			width: blockSize * 2, 
-			height: blockSize * 5, 
+			height: blockSize * 4.3, 
 			thickness: blockSize * .2, 
-			material: materials[2].top, 
-			position: {x: 55.5, y: 8, z: 41}
+			material: customMaterials.door,
+			position: {x: 55.51, y: 8, z: 41}
 		}));
 	}
 
@@ -338,7 +291,13 @@ function _WorldGenerator({tileCount, worldSize}) {
 			position: {x: 67, y: 6, z: 39.4}
 		});
 		fridge.rotateY(Math.PI);
+	}
 
+	this.createKarateGravity = function(_pos) {
+		let geo = new THREE.PlaneGeometry(blockSize * 3, blockSize * 3);
+		let mesh = new THREE.Mesh(geo, customMaterials.karate);
+		applyPositionToMesh(mesh, _pos);
+		World.scene.add(mesh);
 	}
 
 	this.createWorld = function({tileCount, worldSize, worldShape}) {
@@ -346,6 +305,8 @@ function _WorldGenerator({tileCount, worldSize}) {
 		this.createDoor();
 		this.createCompartiment();
 		this.createDrawers();
+		this.createKarateGravity({x: 61, y: 8, z: 41.51});
+		this.createKarateGravity({x: 54, y: 8, z: 29.51});
 
 		for (let x = 0; x < tileCount / chunkSize; x++)
 		{

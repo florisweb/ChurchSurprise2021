@@ -56,7 +56,7 @@
 				height: 110vh;
 				left:  0;
 				top:  0;
-				background: rgba(255, 255, 255, .9);
+				background: rgba(255, 255, 255, .3);
 				transition: all .3s;
 				z-index: 1000001;				
 			}

@@ -189,7 +189,7 @@ function _InputHandler(_canvas) {
 	const blockSize = World.size / World.tileCount;
 	let prevTime = performance.now();
 	let prevSavePos = {x: Camera.camera.position.x, z: Camera.camera.position.z};
-
+	const illegalBlockTypes = [-1, 2, 6, 7];
 	this.update = function() {
 
 		// Gravity
@@ -197,7 +197,8 @@ function _InputHandler(_canvas) {
 		let curBlock = World.worldShape[curPos.x][curPos.z];
 		if (!curBlock) return;
 		let dy = Camera.camera.position.y - (curBlock.y + blockSize * 2 - shifting * blockSize);
-		if (curBlock.type == -1 || curBlock.type == 2)
+
+		if (illegalBlockTypes.includes(curBlock.type))
 		{
 			Camera.camera.position.x = prevSavePos.x;
 			Camera.camera.position.z = prevSavePos.z;
