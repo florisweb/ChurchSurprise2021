@@ -47,11 +47,16 @@ function _Camera() {
 		}
 	}
 
-	this.convertWorldCoordsToBlockCoords = function({x, y, z}) {
-		return {
+	this.convertWorldCoordsToBlockCoords = function({x, y, z}, _rounded = true) {
+		if (_rounded) return {
 			x: Math.round(x / blockSize) + World.worldShape.length / 2,
 			z: Math.round(z / blockSize) + World.worldShape[0].length / 2,
 			y: Math.round(y / blockSize)
+		};
+		return {
+			x: x / blockSize + World.worldShape.length / 2,
+			z: z / blockSize + World.worldShape[0].length / 2,
+			y: y / blockSize
 		}
 	}
 

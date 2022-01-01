@@ -179,6 +179,30 @@
 				font-size: 12px;
 				margin-bottom: 5px;
 			}
+
+
+
+
+
+
+			#inventoryOverlay.overLay {
+				position: fixed;	
+				bottom:  0;
+				left:  calc(50vw - (60px + 10px * 2 + 10px * 2) / 2);
+
+				width:  60px;
+				height: 60px;
+
+				
+				padding:  10px;
+				margin: 10px;
+				z-index: 10000;
+
+				background: rgba(250, 250, 250, .8);
+				border:  2px solid #ccc;
+				border-radius: 5px;
+				box-shadow: 5px 5px 20px 10px rgba(0, 0, 0, .1);
+			}
 		</style>
 	</head>
 	<body class='noselect'>
@@ -208,7 +232,9 @@
 				<div class='text'>Ik kom het ophalen, tot zo.</div>
 			</div>
 		</div>
+		<div class='overLay' id='inventoryOverlay'>
 
+		</div>
 
 		<div class='overlayPage' id='clickToStart'>
 			<div class='text header'>Click to Enter</div>
@@ -240,7 +266,7 @@
 		<script src='js/worldGenerator.js'></script>
 		<script src='js/world.js'></script>
 		<script src='js/camera.js'></script>
-		<script src='js/main.js'></script>
 		<script src='js/game.js'></script>
+		<script src='js/main.js'></script>
 	</body>
 </html>

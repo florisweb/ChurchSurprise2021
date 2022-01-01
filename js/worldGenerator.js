@@ -1,3 +1,74 @@
+function imageScalarFunction(texture, i) {
+	texture.wrapS = texture.wrapT = THREE.RepeatWrapping
+	// texture.repeat.set(blockSize, blockSize);
+}
+
+function loadImageMaterial(_url, _scaleFunc) {
+	 return new THREE.MeshLambertMaterial({
+		color: 0xffffff, 
+		side: THREE.DoubleSide,
+		map: new THREE.TextureLoader().load(_url, _scaleFunc),
+	});
+}
+
+
+
+let customMaterials = {
+	door: loadImageMaterial('images/customMaterials/door.png'),
+	karate: new THREE.MeshLambertMaterial({
+		color: 0xffffff, 
+		side: THREE.DoubleSide,
+		alphaMap: new THREE.TextureLoader().load('images/customMaterials/karatePoppetjeAlpha.png'),
+		transparent: true,
+		map: new THREE.TextureLoader().load('images/customMaterials/karatePoppetje.png'),
+	}),
+	recipe: new THREE.MeshLambertMaterial({
+		color: 0xffffff, 
+		side: THREE.DoubleSide,
+		alphaMap: new THREE.TextureLoader().load('images/customMaterials/recipeAlpha.png'),
+		transparent: true,
+		map: new THREE.TextureLoader().load('images/customMaterials/recipe.png'),
+	}),
+	riceFront: new THREE.MeshLambertMaterial({
+		color: 0xffffff, 
+		side: THREE.DoubleSide,
+		map: new THREE.TextureLoader().load('images/customMaterials/riceFront.png'),
+	}),
+	riceRed: new THREE.MeshLambertMaterial({
+		color: 0xff0000, 
+		side: THREE.DoubleSide,
+	}),
+	waterRiceTexture: new THREE.MeshLambertMaterial({
+		color: 0xffffff, 
+		side: THREE.DoubleSide,
+		map: new THREE.TextureLoader().load('images/customMaterials/waterRiceTexture.png'),
+	})
+}
+
+let materials = [];
+for (let i = 0; i <= 8; i++)
+{
+	curI = i;
+	materials[i] = {
+		top: loadImageMaterial('images/blocks/' + i + '/top.png', (texture) => {imageScalarFunction(texture, i)}),
+		side: loadImageMaterial('images/blocks/' + i + '/side.png', (texture) => {imageScalarFunction(texture, i)}),
+	};
+}
+
+
+
+
+
+
+
+
+let RiceItem;
+
+
+
+
+
+
 
 function _perlin(_frequency) {
 	this.f = 1 / _frequency;
@@ -11,9 +82,11 @@ let Perlin3 = new _perlin(10);
 
 
 let blockSize = 0;
+let tableHeight = 0;
 function _WorldGenerator({tileCount, worldSize}) {
 	const chunkSize = 64;
 	blockSize = worldSize / tileCount;
+	tableHeight = blockSize * 1.25;
 
 	this.createWorldShape = function({tileCount, worldSize}) {
 		let world = [];
@@ -44,46 +117,7 @@ function _WorldGenerator({tileCount, worldSize}) {
 		}
 		return world;
 	}
-
-
-	function imageScalarFunction(texture) {
-		texture.wrapS = texture.wrapT = THREE.RepeatWrapping
-    	texture.repeat.set(blockSize, blockSize);
-	}
-	let materials = [];
-	let customMaterials = {
-		door: loadImageMaterial('images/customMaterials/door.png'),
-		karate: new THREE.MeshLambertMaterial({
-			color: 0xffffff, 
-			side: THREE.DoubleSide,
-			alphaMap: new THREE.TextureLoader().load('images/customMaterials/karatePoppetjeAlpha.png'),
-			transparent: true,
-			map: new THREE.TextureLoader().load('images/customMaterials/karatePoppetje.png'),
-		}),
-		recipe: new THREE.MeshLambertMaterial({
-			color: 0xffffff, 
-			side: THREE.DoubleSide,
-			alphaMap: new THREE.TextureLoader().load('images/customMaterials/recipeAlpha.png'),
-			transparent: true,
-			map: new THREE.TextureLoader().load('images/customMaterials/recipe.png'),
-		})
-	}
-
-	for (let i = 0; i <= 7; i++)
-	{
-		materials[i] = {
-			top: loadImageMaterial('images/blocks/' + i + '/top.png', imageScalarFunction),
-			side: loadImageMaterial('images/blocks/' + i + '/side.png', imageScalarFunction),
-		};
-	}
-
-	function loadImageMaterial(_url, _scaleFunc) {
-		 return new THREE.MeshLambertMaterial({
-			color: 0xffffff, 
-			side: THREE.DoubleSide,
-			map: new THREE.TextureLoader().load(_url, _scaleFunc),
-		});
-	}
+	
 		
 
 
@@ -265,65 +299,98 @@ function _WorldGenerator({tileCount, worldSize}) {
 
 
 	this.createFurnace = function() {
-		new PanComponent({
-			position: {x: houseX + 9.4, y: 8, z: 35.4}, 
-			radius: blockSize * .3, 
-			height: blockSize * .5, 
-			material: materials[5].side,
-			contentMaterial: materials[0].top,
+		const z = 34.3;
+		const y = 6.45;
+		const x = houseX + 9.7;
+		const size = blockSize * 1.5;
+		const offset = size * .3;
+
+		let oven = new OvenComponent({
+			width: size,
+			height: tableHeight, 
+			depth: size,
+			materialSet: materials[8],
+			position: {x: x, y: y, z: z}
 		});
-		new PanComponent({
-			position: {x: houseX + 8.9, y: 8, z: 35.4}, 
-			radius: blockSize * .3, 
-			height: blockSize * .5, 
-			material: materials[5].side,
-			contentMaterial: materials[1].top,
-		});
-		new PanComponent({
-			position: {x: houseX + 8.9, y: 8, z: 35.9}, 
-			radius: blockSize * .3, 
-			height: blockSize * .5, 
+
+
+
+
+
+		const panY = y + tableHeight / blockSize * 1;
+		Game.furnace.ricePan = new PanComponent({
+			position: {x: x - offset, z: z - offset, y: panY}, 
+			radius: blockSize * .2, 
+			height: blockSize * .2, 
 			material: materials[5].side,
 			contentMaterial: materials[2].top,
 		});
-		new PanComponent({
-			position: {x: houseX + 9.4, y: 8, z: 35.9}, 
-			radius: blockSize * .3, 
-			height: blockSize * .5, 
-			material: materials[5].side,
-			contentMaterial: materials[3].top,
-		});
+		Game.furnace.ricePan.setContentHeight(.5);
 
+		Game.furnace.wokPan = new PanComponent({
+			position: {x: x - offset, z: z + offset, y: panY}, 
+			radius: blockSize * .2, 
+			height: blockSize * .2, 
+			material: materials[5].side,
+			contentMaterial: materials[0].top,
+		});
+		Game.furnace.wokPan.setContentHeight(.2);
+
+		// Game.furnace.ricePan = new PanComponent({
+		// 	position: {x: x + offset, z: z - offset, y: panY},
+		// 	radius: blockSize * .2, 
+		// 	height: blockSize * .2, 
+		// 	material: materials[5].side,
+		// 	contentMaterial: materials[2].top,
+		// });
 	}
 
 
 	this.createDrawers = function() {
 		const y = 6.45;
-		const x = houseX + 9.7;
+		const x = houseX + 9.79;
+		
 		let drawer1 = new Compartiment({
-			width: blockSize * 1.5, 
-			height: blockSize * 1.3, 
-			depth: blockSize * 2,
+			width: blockSize * 1.4, 
+			height: tableHeight,
+			depth: blockSize * 1.75,
 			material: materials[5].side,
-			position: {x: x, y: y, z: 35.4}
+			position: {x: x, y: y, z: 36.001}
 		});
 		drawer1.rotateY(Math.PI);
 		let drawer2 = new Compartiment({
-			width: blockSize * 1.5, 
-			height: blockSize * 1.3, 
-			depth: blockSize * 2,
+			width: blockSize * 1.4, 
+			height: tableHeight,
+			depth: blockSize * 1.75,
 			material: materials[5].side,
-			position: {x: x, y: y, z: 37.401}
+			position: {x: x, y: y, z: 37.751}
 		});
 		drawer2.rotateY(Math.PI);
-		let fridge = new Compartiment({
-			width: blockSize * 1.5, 
+
+		Game.fridge = new Compartiment({
+			width: blockSize * 1.4, 
 			height: blockSize * 3.5, 
 			depth: blockSize * 1.5,
 			material: materials[5].side,
 			position: {x: x, y: y, z: 39.4}
 		});
-		fridge.rotateY(Math.PI);
+		Game.fridge.rotateY(Math.PI);
+	}
+
+	this.createItems = function() {
+		const itemSize = blockSize * .2;
+		let riceItemPos = Camera.convertWorldCoordsToBlockCoords(Game.fridge.mesh.position, false);
+		RiceItem = new BoxItem({
+			name: "Rijst",
+			width: itemSize * .5,
+			height: itemSize * 2.5,
+			depth: itemSize * 1.5,
+			position: {...riceItemPos, y: riceItemPos.y + itemSize * 2.5 / 2 / blockSize},
+			materialSet: {
+				front: customMaterials.riceFront,
+				rest: customMaterials.riceRed,
+			}
+		});
 	}
 
 	this.createKarateGravity = function(_pos) {
@@ -344,7 +411,9 @@ function _WorldGenerator({tileCount, worldSize}) {
 		this.createWaterFloor();
 		this.createDoor();
 		this.createDrawers();
+		this.createItems();
 		this.createFurnace();
+
 
 
 		this.createKarateGravity({x: 61, y: 8, z: 41.51});
@@ -367,6 +436,16 @@ function _WorldGenerator({tileCount, worldSize}) {
 	}
 
 }
+
+
+
+
+
+
+
+
+
+
 
 
 function Compartiment({width, height, depth, position, material}) {
@@ -440,6 +519,7 @@ function Compartiment({width, height, depth, position, material}) {
 
 
 function ClickableComponent(mesh) {
+	this.id = Math.random() * 100000000;
 	this.mesh = mesh;
 	this.mesh.component = this;
 	World.clickables.push(this.mesh);
@@ -508,29 +588,43 @@ function PanComponent({radius, height, material, contentMaterial, position}) {
 	geometry.mergeVertices();
 
 	let mesh = new THREE.Mesh(geometry, material);
+	ClickableComponent.call(this, mesh);
+
 	this.mesh = mesh;
 	let contentMesh = new THREE.Mesh(new THREE.CircleGeometry(radius, 32), contentMaterial);
 	contentMesh.rotation.x = Math.PI * .5;
 	contentMesh.position.y = -height / 2 + Math.random() * height;
+	window.c = contentMesh;
 	
 	World.scene.add(this.mesh);
 	World.scene.add(contentMesh);
 
 
+	this.onclick = function() {
+		Game.inventory.clickOnPan(this);
+	}
+
 	this.setPosition = function(_pos) {
-		applyPositionToMesh(mesh, _pos);
-		applyPositionToMesh(contentMesh, _pos);
+		applyPositionToMesh(mesh, {..._pos, y: _pos.y + height / 2});
+		applyPositionToMesh(contentMesh, {..._pos, y: _pos.y + height / 2});
 	}
 
 	this.animateToPos = function(_pos) {
 		animateCoord(Camera.convertBlockCoordsToWorldCoords(_pos));
 	}
 
+	this.setContentHeight = (_percHeight) => {
+		contentMesh.position.y = mesh.position.y - height / 2 + height * _percHeight;
+	}
+	this.setContentMaterial = (_material) => {
+		contentMesh.material = _material;
+	}
+
 
 	const stepSize = .2;
 	function animateCoord(_finalCoord) {
 		let dx = mesh.position.x - _finalCoord.x;
-		let dy = mesh.position.y - _finalCoord.y;
+		let dy = mesh.position.y - height / 2 / blockSize - _finalCoord.y;
 		let dz = mesh.position.z - _finalCoord.z;
 
 
@@ -573,6 +667,49 @@ function PanComponent({radius, height, material, contentMaterial, position}) {
 
 
 
+
+function OvenComponent({width, height, depth, materialSet, position }) {
+	let geometryTop = new THREE.PlaneGeometry(width, depth);
+	let topMesh = new THREE.Mesh(geometryTop, materialSet.top);
+	topMesh.rotation.x = .5 * Math.PI;
+	
+	let sideGeometry = new THREE.BoxGeometry(width, height, depth);
+	let sideMesh = new THREE.Mesh(sideGeometry, materialSet.side);
+
+	position.y += height / 2 / blockSize;
+	applyPositionToMesh(sideMesh, position);
+	applyPositionToMesh(topMesh, {...position, y: position.y + height / blockSize / 2 + .01});
+
+	World.scene.add(topMesh);
+	World.scene.add(sideMesh);
+}
+
+
+
+function BoxItem({width, height, depth, materialSet, position, name}) {
+	this.name = name;
+	let geometry = new THREE.BoxGeometry(width, height, depth);
+	let mesh = new THREE.Mesh(geometry, [materialSet.rest, materialSet.front, materialSet.rest, materialSet.rest,, materialSet.rest, materialSet.rest]);
+	this.mesh = mesh;
+	ClickableComponent.call(this, mesh);
+	applyPositionToMesh(this.mesh, position);
+
+	World.scene.add(mesh);
+
+	let pickedUp = false;
+	this.onclick = function() {
+		if (pickedUp || Game.inventory.curItem) return;
+		pickedUp = true;
+		applyPositionToMesh(this.mesh, {...position, y: 100});
+		Game.inventory.setItem(this);
+	}
+
+
+	this.drop = function() {
+		pickedUp = false;
+		applyPositionToMesh(this.mesh, position);
+	}
+}
 
 
 
