@@ -29,6 +29,15 @@ let customMaterials = {
 		transparent: true,
 		map: new THREE.TextureLoader().load('images/customMaterials/recipe.png'),
 	}),
+
+	roof: new THREE.MeshLambertMaterial({
+		color: 0xffffff, 
+		side: THREE.DoubleSide,
+		alphaMap: new THREE.TextureLoader().load('images/customMaterials/roofAlpha.png'),
+		transparent: true,
+		map: new THREE.TextureLoader().load('images/customMaterials/roof.png'),
+	}),
+
 	riceFront: new THREE.MeshLambertMaterial({
 		color: 0xffffff, 
 		side: THREE.DoubleSide,
@@ -329,7 +338,19 @@ function _WorldGenerator({tileCount, worldSize}) {
 	}
 
 	this.createHouseRoof = function() {
-		
+		let geometry = new THREE.PlaneGeometry((houseWidth + 6) * blockSize, 8 * blockSize);
+		let mesh = new THREE.Mesh(geometry, customMaterials.roof);
+		window.m = mesh;
+		applyPositionToMesh(mesh, {x: houseX + 5.4, z: houseY + houseDepth - blockSize * 1.8, y: blockSize * (wallHeight + 8.5)})
+		mesh.rotation.x = -.2 * Math.PI;
+		World.scene.add(mesh);
+		World.meshes.push(mesh);
+
+		let geometry2 = new THREE.PlaneGeometry((houseWidth) * blockSize, (houseDepth + 1) * blockSize);
+		let mesh2 = new THREE.Mesh(geometry2, materials[7].side);
+		mesh2.rotation.x = .5 * Math.PI;
+		applyPositionToMesh(mesh2, {x: houseX + 5, z: houseY + houseDepth / 2, y: wallHeight + 2.3})
+		World.scene.add(mesh2);
 	}
 
 	this.createDoor = function() {
@@ -506,7 +527,7 @@ function _WorldGenerator({tileCount, worldSize}) {
 		this.createDrawers();
 		this.createItems();
 		this.createFurnace();
-
+		this.createHouseRoof();
 
 
 		this.createKarateGravity({x: 61, y: 8, z: 41.51});
