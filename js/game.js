@@ -25,6 +25,9 @@ const Game = new function() {
 		
 	}
 	this.fridge;
+	this.drawer1;
+	this.drawer2;
+
 
 	this.inventory = new Inventory();
 }
@@ -37,15 +40,17 @@ function Inventory() {
 	this.setItem = function(_item) {
 		if (this.curItem) return false;
 		this.curItem = _item;
+		this.updateItem();
 	}
 
 	this.dropItem = function() {
 		if (!this.curItem) return;
 		this.curItem.drop();
-		this.clearItem();
+		this.updateItem();
 	}
 	this.clearItem = function() {
 		this.curItem = false;
+		this.updateItem();
 	}
 
 	this.clickOnPan = function(_pan) {
@@ -58,7 +63,19 @@ function Inventory() {
 				_pan.setContentMaterial(customMaterials.waterRiceTexture);
 			break;
 		}
+	}
 
+	this.updateItem = function() {
+		let html = document.querySelector('#inventoryOverlay .itemImage');
+		let src = '';
+		html.style.display = 'none';
+		
+		if (this.curItem) 
+		{
+			src = this.curItem.itemIconUrl;
+			html.style.display = 'block';
+		}
+		html.setAttribute('src', src);
 	}
 }
 

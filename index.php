@@ -203,6 +203,14 @@
 				border-radius: 5px;
 				box-shadow: 5px 5px 20px 10px rgba(0, 0, 0, .1);
 			}
+			#inventoryOverlay .itemImage {
+				position: relative;
+				margin: auto;
+				width: auto;
+				height: 100%;
+				border-radius: 5px;
+				display: none;
+			}
 		</style>
 	</head>
 	<body class='noselect'>
@@ -233,7 +241,7 @@
 			</div>
 		</div>
 		<div class='overLay' id='inventoryOverlay'>
-
+			<img src='' class='itemImage'>
 		</div>
 
 		<div class='overlayPage' id='clickToStart'>

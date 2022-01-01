@@ -350,28 +350,29 @@ function _WorldGenerator({tileCount, worldSize}) {
 		const y = 6.45;
 		const x = houseX + 9.79;
 		
-		let drawer1 = new Compartiment({
+		Game.drawer1 = new Compartiment({
 			width: blockSize * 1.4, 
 			height: tableHeight,
 			depth: blockSize * 1.75,
-			material: materials[5].side,
+			materialSet: materials[5],
 			position: {x: x, y: y, z: 36.001}
 		});
-		drawer1.rotateY(Math.PI);
-		let drawer2 = new Compartiment({
+		Game.drawer1.rotateY(Math.PI);
+		
+		Game.drawer2 = new Compartiment({
 			width: blockSize * 1.4, 
 			height: tableHeight,
 			depth: blockSize * 1.75,
-			material: materials[5].side,
+			materialSet: materials[5],
 			position: {x: x, y: y, z: 37.751}
 		});
-		drawer2.rotateY(Math.PI);
+		Game.drawer2.rotateY(Math.PI);
 
 		Game.fridge = new Compartiment({
 			width: blockSize * 1.4, 
 			height: blockSize * 3.5, 
 			depth: blockSize * 1.5,
-			material: materials[5].side,
+			materialSet: materials[5],
 			position: {x: x, y: y, z: 39.4}
 		});
 		Game.fridge.rotateY(Math.PI);
@@ -379,9 +380,10 @@ function _WorldGenerator({tileCount, worldSize}) {
 
 	this.createItems = function() {
 		const itemSize = blockSize * .2;
-		let riceItemPos = Camera.convertWorldCoordsToBlockCoords(Game.fridge.mesh.position, false);
+		let riceItemPos = Camera.convertWorldCoordsToBlockCoords(Game.drawer1.mesh.position, false);
 		RiceItem = new BoxItem({
 			name: "Rijst",
+			itemIconUrl: "images/riceIcon.png",
 			width: itemSize * .5,
 			height: itemSize * 2.5,
 			depth: itemSize * 1.5,
@@ -448,7 +450,7 @@ function _WorldGenerator({tileCount, worldSize}) {
 
 
 
-function Compartiment({width, height, depth, position, material}) {
+function Compartiment({width, height, depth, position, materialSet}) {
 	const paneThickness = width * .1;
 	this.door = new RotateComponent({
 		width: depth, 
@@ -459,7 +461,7 @@ function Compartiment({width, height, depth, position, material}) {
 			y: position.y + height / blockSize / 2,
 			z: position.z + depth / blockSize / 2,
 		},
-		material: material,
+		material: materialSet.side,
 		initalYRotation: Math.PI * .5
 	});
 
@@ -496,7 +498,7 @@ function Compartiment({width, height, depth, position, material}) {
 	geo.mergeMesh(side3);
 
 	geo.mergeVertices();
-	let mesh = new THREE.Mesh(geo, material);
+	let mesh = new THREE.Mesh(geo, materialSet.top);
 	this.mesh = mesh;
 	
 	applyPositionToMesh(mesh, position);
@@ -686,10 +688,11 @@ function OvenComponent({width, height, depth, materialSet, position }) {
 
 
 
-function BoxItem({width, height, depth, materialSet, position, name}) {
+function BoxItem({width, height, depth, materialSet, position, name, itemIconUrl}) {
 	this.name = name;
+	this.itemIconUrl = itemIconUrl;
 	let geometry = new THREE.BoxGeometry(width, height, depth);
-	let mesh = new THREE.Mesh(geometry, [materialSet.rest, materialSet.front, materialSet.rest, materialSet.rest,, materialSet.rest, materialSet.rest]);
+	let mesh = new THREE.Mesh(geometry, [materialSet.rest, materialSet.front, materialSet.rest, materialSet.rest, materialSet.rest, materialSet.rest]);
 	this.mesh = mesh;
 	ClickableComponent.call(this, mesh);
 	applyPositionToMesh(this.mesh, position);
