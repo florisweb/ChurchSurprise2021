@@ -30,6 +30,9 @@ const Game = new function() {
 
 
 	this.inventory = new Inventory();
+	this.finish = function() {
+		finishPage.classList.remove('hide');
+	}
 }
 
 
@@ -38,7 +41,7 @@ const Game = new function() {
 function Inventory() {
 	this.curItem = false;
 	this.setItem = function(_item) {
-		if (this.curItem) return false;
+		if (this.curItem) this.dropItem();
 		this.curItem = _item;
 		this.updateItem();
 	}
@@ -46,17 +49,55 @@ function Inventory() {
 	this.dropItem = function() {
 		if (!this.curItem) return;
 		this.curItem.drop();
-		this.updateItem();
+		this.clearItem();
 	}
 	this.clearItem = function() {
 		this.curItem = false;
 		this.updateItem();
 	}
-
+	let riceStarted = false;
 	this.clickOnPan = function(_pan) {
 		switch (_pan.id)
 		{
 			case Game.furnace.ricePan.id:
+				if (this.curItem.name != RiceItem.name) return;
+				this.clearItem();
+				_pan.setContentHeight(.7);
+				_pan.setContentMaterial(customMaterials.waterRiceTexture);
+				riceStarted = true;
+				if (Game.furnace.wokPan.orderIndex == 3) setTimeout(Game.finish, 1000 * 3);
+			break;
+			case Game.furnace.wokPan.id:
+				switch (Game.furnace.wokPan.orderIndex)
+				{
+					case 1: 
+						if (this.curItem.name != GehaktItem.name) return;
+						this.clearItem();
+						_pan.setContentHeight(.5);
+						Game.furnace.wokPan.orderIndex = 2;
+						_pan.setContentMaterial(customMaterials.wokPanState2);
+					break;
+					case 2: 
+						if (this.curItem.name != ChampignonItem.name) return;
+						this.clearItem();
+						_pan.setContentHeight(.7);
+						Game.furnace.wokPan.orderIndex = 3;
+						if (riceStarted) setTimeout(Game.finish, 1000 * 3);
+						_pan.setContentMaterial(customMaterials.wokPanState3);
+					break;
+
+					default: 
+						if (this.curItem.name != CourgetteItem.name) return;
+						this.clearItem();
+						_pan.setContentHeight(.3);
+						Game.furnace.wokPan.orderIndex = 1;
+						_pan.setContentMaterial(customMaterials.wokPanState1);
+					break;
+				}
+			
+				
+
+
 				if (this.curItem.name != RiceItem.name) return;
 				this.clearItem();
 				_pan.setContentHeight(.7);

@@ -104,7 +104,8 @@ function _InputHandler(_canvas) {
 	const direction = new THREE.Vector3();
 
 	const onKeyDown = function ( event ) {
-		switch ( event.code ) {
+		switch ( event.code ) 
+		{
 
 			case 'ArrowUp':
 			case 'KeyW':
@@ -131,8 +132,10 @@ function _InputHandler(_canvas) {
 			case 'ShiftRight':
 				shifting = true;
 				break;
+			case "KeyQ":
+				Game.inventory.dropItem();
+				break;
 		}
-
 	};
 
 	const onKeyUp = function ( event ) {

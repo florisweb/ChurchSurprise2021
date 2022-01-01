@@ -38,12 +38,54 @@ let customMaterials = {
 		color: 0xff0000, 
 		side: THREE.DoubleSide,
 	}),
+	bakjeGray: new THREE.MeshLambertMaterial({
+		color: 0x939393, 
+		side: THREE.DoubleSide,
+	}),
+
 	waterRiceTexture: new THREE.MeshLambertMaterial({
 		color: 0xffffff, 
 		side: THREE.DoubleSide,
 		map: new THREE.TextureLoader().load('images/customMaterials/waterRiceTexture.png'),
-	})
+	}),
+	oilTexture: new THREE.MeshLambertMaterial({
+		color: 0xffffff, 
+		side: THREE.DoubleSide,
+		map: new THREE.TextureLoader().load('images/customMaterials/oilTexture.png'),
+	}),
+	champignonTexture: new THREE.MeshLambertMaterial({
+		color: 0xffffff, 
+		side: THREE.DoubleSide,
+		map: new THREE.TextureLoader().load('images/customMaterials/champignonsTexture.png'),
+	}),
+	gehaktTexture: new THREE.MeshLambertMaterial({
+		color: 0xffffff, 
+		side: THREE.DoubleSide,
+		map: new THREE.TextureLoader().load('images/customMaterials/gehaktTexture.png'),
+	}),
+	
+	courgetteTexture: new THREE.MeshLambertMaterial({
+		color: 0xffffff, 
+		side: THREE.DoubleSide,
+		map: new THREE.TextureLoader().load('images/customMaterials/courgetteTexture.png'),
+	}),
+	wokPanState1: new THREE.MeshLambertMaterial({
+		color: 0xffffff, 
+		side: THREE.DoubleSide,
+		map: new THREE.TextureLoader().load('images/customMaterials/wokPanState1.png'),
+	}),
+	wokPanState2: new THREE.MeshLambertMaterial({
+		color: 0xffffff, 
+		side: THREE.DoubleSide,
+		map: new THREE.TextureLoader().load('images/customMaterials/wokPanState2.png'),
+	}),
+	wokPanState3: new THREE.MeshLambertMaterial({
+		color: 0xffffff, 
+		side: THREE.DoubleSide,
+		map: new THREE.TextureLoader().load('images/customMaterials/wokPanState3.png'),
+	}),
 }
+
 
 let materials = [];
 for (let i = 0; i <= 8; i++)
@@ -63,6 +105,9 @@ for (let i = 0; i <= 8; i++)
 
 
 let RiceItem;
+let ChampignonItem;
+let GehaktItem;
+let CourgetteItem;
 
 
 
@@ -332,7 +377,7 @@ function _WorldGenerator({tileCount, worldSize}) {
 			radius: blockSize * .2, 
 			height: blockSize * .2, 
 			material: materials[5].side,
-			contentMaterial: materials[0].top,
+			contentMaterial: customMaterials.oilTexture,
 		});
 		Game.furnace.wokPan.setContentHeight(.2);
 
@@ -391,8 +436,54 @@ function _WorldGenerator({tileCount, worldSize}) {
 			materialSet: {
 				front: customMaterials.riceFront,
 				rest: customMaterials.riceRed,
+				frontIndex: 1,
 			}
 		});
+
+
+		let fridgePos = Camera.convertWorldCoordsToBlockCoords(Game.fridge.mesh.position, false);
+		ChampignonItem = new BoxItem({
+			name: "Champignons",
+			itemIconUrl: "images/customMaterials/champignonsTexture.png",
+			width: itemSize * 2.5,
+			height: itemSize * .5,
+			depth: itemSize * 1.5,
+			position: {...fridgePos, z: fridgePos.z - blockSize * .45, y: fridgePos.y + itemSize * .5 / 2 / blockSize},
+			materialSet: {
+				front: customMaterials.champignonTexture,
+				rest: customMaterials.bakjeGray,
+				frontIndex: 2,
+			}
+		});
+
+		GehaktItem = new BoxItem({
+			name: "Gehakt",
+			itemIconUrl: "images/customMaterials/gehaktTexture.png",
+			width: itemSize * 2.5,
+			height: itemSize * .5,
+			depth: itemSize * 1.5,
+			position: {...fridgePos, z: fridgePos.z - blockSize * 0, y: fridgePos.y + itemSize * .5 / 2 / blockSize},
+			materialSet: {
+				front: customMaterials.gehaktTexture,
+				rest: customMaterials.bakjeGray,
+				frontIndex: 2,
+			}
+		});
+
+		CourgetteItem = new BoxItem({
+			name: "Courgette",
+			itemIconUrl: "images/customMaterials/courgetteTexture.png",
+			width: itemSize * 2.5,
+			height: itemSize * .5,
+			depth: itemSize * 1.5,
+			position: {...fridgePos, z: fridgePos.z + blockSize * .45, y: fridgePos.y + itemSize * .5 / 2 / blockSize},
+			materialSet: {
+				front: customMaterials.courgetteTexture,
+				rest: customMaterials.bakjeGray,
+				frontIndex: 2,
+			}
+		});
+
 	}
 
 	this.createKarateGravity = function(_pos) {
@@ -692,7 +783,9 @@ function BoxItem({width, height, depth, materialSet, position, name, itemIconUrl
 	this.name = name;
 	this.itemIconUrl = itemIconUrl;
 	let geometry = new THREE.BoxGeometry(width, height, depth);
-	let mesh = new THREE.Mesh(geometry, [materialSet.rest, materialSet.front, materialSet.rest, materialSet.rest, materialSet.rest, materialSet.rest]);
+	let materials = [materialSet.rest, materialSet.rest, materialSet.rest, materialSet.rest, materialSet.rest];
+	materials.splice(materialSet.frontIndex, 0, materialSet.front);
+	let mesh = new THREE.Mesh(geometry, materials);
 	this.mesh = mesh;
 	ClickableComponent.call(this, mesh);
 	applyPositionToMesh(this.mesh, position);
@@ -701,7 +794,7 @@ function BoxItem({width, height, depth, materialSet, position, name, itemIconUrl
 
 	let pickedUp = false;
 	this.onclick = function() {
-		if (pickedUp || Game.inventory.curItem) return;
+		if (pickedUp) return;
 		pickedUp = true;
 		applyPositionToMesh(this.mesh, {...position, y: 100});
 		Game.inventory.setItem(this);

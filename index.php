@@ -58,7 +58,6 @@
 				background: #fff;
 				transition: all .3s;
 				z-index: 1000001;
-				display: none;			
 			}
 			.overlayPage .text {
 				position: relative;
@@ -75,6 +74,25 @@
 
 			#aLittleEarlyMessage.overlayPage {
 				background: #fff;
+			}
+
+
+			#finishPage.overlayPage {
+				/*border:  1px solid red;*/
+				/*background: #fff;*/
+			}
+
+			#finishPage.overlayPage .finishImage {
+				position: relative;
+
+				left: 35vw;
+				width: 30vw;
+				height: auto;
+				margin: auto;
+				border-radius: 5px;
+			}
+			#finishPage.overlayPage .text {
+				top:  25vh;
 			}
 
 
@@ -206,7 +224,7 @@
 			#inventoryOverlay .itemImage {
 				position: relative;
 				margin: auto;
-				width: auto;
+				width: 100%;
 				height: 100%;
 				border-radius: 5px;
 				display: none;
@@ -257,6 +275,17 @@
 					aLittleEarlyMessage.classList.add('hide');
 				}
 			</script>
+		</div>
+
+
+		<div class='overlayPage hide' id='finishPage'>
+			<img src='images/finish.jpg' class='text finishImage'>
+
+			<div class='text header'>Bestelling succesvol afgeleverd!</div>
+			<div class='text' id='scoreHolder'></div>
+			<script>scoreHolder.innerHTML = "Klanttevredenheid: " + (9 + Math.round(Math.random() * 10) / 10)</script>
+			<br>
+			<div class='text'>De pakjes mogen nu open!</div>
 		</div>
 
 
